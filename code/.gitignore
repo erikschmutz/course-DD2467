@@ -1,0 +1,9 @@
+/target
+build.sbt
+/project
+.bloop
+.class
+/.metals
+/.bsp
+*.class
+/out
