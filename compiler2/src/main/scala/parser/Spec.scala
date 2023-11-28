@@ -8,6 +8,7 @@ object Spec {
     (Equal, EqualMatcher()),
     (CharLiteral, CharLiteralMatcher()),
     (Plus, PlusMatcher()),
+    (Minus, MinusMatcher()),
     (StringLiteral, StringLiteralMatcher())
   );
 

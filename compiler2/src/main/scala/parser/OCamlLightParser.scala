@@ -13,8 +13,7 @@ object OCamlLightParser extends RegexParsers {
   def parseSyntax(value: String) = {
     val tokens = parseTokens(value).get;
     println(tokens)
-    val result = AST.apply(tokens)
-    print("result", result)
-    result
+    // val result = AST.apply(tokens)
+    
   }
 }

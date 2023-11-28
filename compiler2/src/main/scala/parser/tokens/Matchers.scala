@@ -26,3 +26,4 @@ case class LetMatcher() extends StaticMatcher("let", Let());
 
 case class EqualMatcher() extends StaticMatcher("=", Equal());
 case class PlusMatcher() extends StaticMatcher("\\+", Plus());
+case class MinusMatcher() extends StaticMatcher("\\-", Minus());

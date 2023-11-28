@@ -1,0 +1,42 @@
+import scala.util.parsing.combinator.{RegexParsers, Parsers}
+
+/**
+ * ocaml light - 
+ **/
+
+abstract class Token(regex: Regex) {}
+
+case class StringLiteral(value: String) extends Token("\".*\"".r) {}
+case class IntLiteral(value: String) extends Token("[0-9]*".r) {}
+case class Identifier(name: String) extends Token(".*".r) {}
+case class Keyword(regex: Regex) extends Token(regex) {}
+
+
+case class Assignment(name: Variable, value: StaticValue) {}
+
+
+abstract class Statement {}
+
+
+object OCamlLightParser extends RegexParsers {
+  def stringLiteral: Parser[StringLiteral] = "\".*\"".r ^^ { StringLiteral(_) }
+  def integerLiteral: Parser[IntLiteral] = "[0-9]*".r ^^ { IntLiteral(_) }
+  def variable: Parser[Variable] = "[a-z]+".r ^^ { Variable(_) }
+  def primitives = (word | integer);
+  def expr = (variable | primitives);
+  def assignment: Parser[Assignment] =
+    "let" ~ variable ~ "=" ~ (expr) ^^ { case _ ~ name ~ _ ~ value =>
+      Assignment(name, value)
+    }
+
+  def stmt = assignment | primitives;
+
+  def apply(value: String) = {
+    parseAll(stmt, value)
+  }
+}
+import scala.util.parsing.combinator.{RegexParsers, Parsers}
+
+/**
+ * ocaml light - 
+ **/

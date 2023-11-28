@@ -1,18 +1,25 @@
-/* Literals */
-case class IntLiteral(value: Integer) extends Token {}
-case class CharLiteral(value: String) extends Token {}
-case class StringLiteral(value: String) extends Token {}
+import scala.util.matching.Regex
+import scala.collection.immutable.HashMap
 
-/* Identifiers */
-case class IdentifierLowecaseIndent(value: String) extends Token {}
-case class IdentifierCapitalizedIndent(value: String) extends Token {}
-case class Identifier(value: String) extends Token {}
+object Tokens {
+  abstract class Token
 
-/* Keywords */
-case class Let() extends Token {}
+  /* Literals */
+  case class INT_LIT(value: Integer) extends Token
+  case class CHAR_LIT(value: String) extends Token
+  case class STR_LIT(value: String) extends Token
 
-/* Operators */
-case class Equal() extends Token() {}
-case class Plus() extends Token() {}
-case class Minus() extends Token() {}
-case class Multiply() extends Token() {}
+  /* Identifiers */
+  case class IDENTIFIER(value: String) extends Token
+
+  /* Keywords */
+  case class LET() extends Token
+
+  /* Operators */
+  case class EQUAL() extends Token
+  case class PLUS() extends Token
+  case class MINUS() extends Token
+  case class MULTIPLY() extends Token
+
+  val descriptions = HashMap[() => Token, Regex](INT_LIT => "".r)
+}

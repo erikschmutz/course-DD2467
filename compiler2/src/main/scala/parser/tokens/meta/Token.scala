@@ -9,7 +9,6 @@ object TokenMap {
 
 trait Token extends Positional
 
-
 abstract class Matcher[-A, +B <: Token](regex: Regex, builder: Function[A, B]) {
   def t = builder;
   def r = regex;

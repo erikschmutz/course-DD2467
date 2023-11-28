@@ -10,9 +10,12 @@ class OCamlLightParserSpec extends AnyFlatSpec with Matchers {
   }
 
   def getSyntaxAsString(value: String) = {
+
     println( OCamlLightParser.parseSyntax(value))
     // OCamlLightParser.parseSyntax(value).get.mkString("\n")
   }
+
+
 
   "The parser" should "should be able to generate tokens" in {
   }
@@ -35,8 +38,6 @@ class OCamlLightParserSpec extends AnyFlatSpec with Matchers {
   "AST" should "should be able to generate asts" in {
   }
 
-
-
   val syntax = FileSystems.getDefault.getPath("./src/test/scala/examples/syntax")
   Files
     .list(syntax).sorted()
@@ -47,7 +48,10 @@ class OCamlLightParserSpec extends AnyFlatSpec with Matchers {
           val inFile = scala.io.Source.fromFile(fileName).mkString;
           val outFile =
             scala.io.Source.fromFile(fileName.replace(".in", ".out")).mkString;
-          getSyntaxAsString(inFile) shouldEqual (outFile)
+
+          val tokens = OCamlLightParser.parseTokens(inFile).get
+          println(SyntaxParser.parse(tokens))
+          assert(false)
           
         } 
       }

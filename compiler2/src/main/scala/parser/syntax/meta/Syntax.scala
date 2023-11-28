@@ -4,7 +4,7 @@ import scala.reflect.{ClassTag, classTag}
 import scala.collection.mutable.HashMap
 import scala.util.parsing.combinator.{PackratParsers, Parsers}
 
-trait Tree extends Positional
+case class IntTree(value: Integer) extends Tree
 
 object Utils {
   var hashMap = new HashMap[Any, Any]()
@@ -23,8 +23,8 @@ abstract class SyntaxDefinition extends Parsers with PackratParsers{
 
   def t[T <: SyntaxDefinition](value: () => T) = {
     val name = value.getClass().getName().replace("$", "")
-
-     if (!Utils.hashMap.contains(name)) {
+     
+    if (!Utils.hashMap.contains(name)) {
       val v = value()
         val result = v.definition.asInstanceOf[this.PackratParser[v.Output]]
         result
