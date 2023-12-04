@@ -1,0 +1,21 @@
+Program(
+    List(
+        OperatorExpr(
+            Parentensis(
+                OperatorExpr(
+                    IntLit(1),
+                    Parentensis(
+                        OperatorExpr(
+                            IntLit(2),
+                            IntLit(3),
+                            Multiply()
+                        )
+                    ),
+                    Plus()
+                )
+            ),
+            IntLit(4),
+            Plus()
+        )
+    )
+)

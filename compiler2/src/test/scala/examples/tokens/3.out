@@ -1,2 +1,2 @@
-CharLiteral(a)
-IntLiteral(1)
+CHAR_LIT(a)
+INT_LIT(1)

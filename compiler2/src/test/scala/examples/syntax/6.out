@@ -1,9 +1,9 @@
 Program(
     List(
         OperatorExpr(
-            IntLit(3),
+            IntLit(1),
             IntLit(2),
-            Plus()
+            Divide()
         )
     )
 )

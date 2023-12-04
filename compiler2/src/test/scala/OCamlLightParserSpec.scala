@@ -5,55 +5,65 @@ import java.nio.file.{FileSystems, Files}
 
 class OCamlLightParserSpec extends AnyFlatSpec with Matchers {
 
-  def getTokenAsString(value: String): String = {
+  def readFile(path: String): String = {
+    scala.io.Source.fromFile(path).mkString
+  }
+
+  def getFilesFromDir(dir: String) = {
+    val path =
+      FileSystems.getDefault.getPath("./src/test/scala/" + dir)
+
+    Files
+      .list(path)
+      .sorted()
+  }
+
+  def getTokens(value: String): String = {
     OCamlLightParser.parseTokens(value).get.mkString("\n")
   }
 
-  def getSyntaxAsString(value: String) = {
-
-    println( OCamlLightParser.parseSyntax(value))
-    // OCamlLightParser.parseSyntax(value).get.mkString("\n")
+  def getSyntax(value: String): String = {
+    OCamlLightParser
+      .parseSyntax(value)
+      .get
+      .toString
   }
 
+  "Lexer" should "exists" in {}
 
-
-  "The parser" should "should be able to generate tokens" in {
-  }
-
-  val tokens = FileSystems.getDefault.getPath("./src/test/scala/examples/tokens")
-  Files
-    .list(tokens).sorted()
-    .forEach((file) => {
-      val fileName = file.toAbsolutePath.toString
-      if (fileName.endsWith(".in")) {
-        it should "be able to parse tokens from file " + file.getFileName in {
-          val inFile = scala.io.Source.fromFile(fileName).mkString;
-          val outFile =
-            scala.io.Source.fromFile(fileName.replace(".in", ".out")).mkString;
-          getTokenAsString(inFile) shouldEqual (outFile)
-        } 
+  getFilesFromDir("examples/tokens").forEach((file) => {
+    val fileName = file.toAbsolutePath.toString
+    if (fileName.endsWith(".in")) {
+      it should "be able to parse tokens from file " + file.getFileName in {
+        val inFile = readFile(fileName);
+        val outFile = readFile(fileName.replace(".in", ".out"));
+        getTokens(inFile) shouldEqual (outFile)
       }
-    });
+    }
+  })
 
-  "AST" should "should be able to generate asts" in {
-  }
+  "Parser" should "exists" in {}
+  getFilesFromDir("examples/syntax").forEach((file) => {
+    val fileName = file.toAbsolutePath.toString
+    if (fileName.endsWith(".in")) {
+      it should "be able to parse syntax from file " + file.getFileName in {
+        val inFile = readFile(fileName);
+        // removes white space
+        val outFile = readFile(fileName.replace(".in", ".out"))
+          .replace(" ", "")
+          .replace("\n", "");
 
-  val syntax = FileSystems.getDefault.getPath("./src/test/scala/examples/syntax")
-  Files
-    .list(syntax).sorted()
-    .forEach((file) => {
-      val fileName = file.toAbsolutePath.toString
-      if (fileName.endsWith(".in")) {
-        it should "be able to parse syntax from file " + file.getFileName in {
-          val inFile = scala.io.Source.fromFile(fileName).mkString;
-          val outFile =
-            scala.io.Source.fromFile(fileName.replace(".in", ".out")).mkString;
+        val output = getSyntax(inFile)
+          .replace(" ", "")
+          .replace("\n", "");
 
-          val tokens = OCamlLightParser.parseTokens(inFile).get
-          println(SyntaxParser.parse(tokens))
-          assert(false)
-          
-        } 
+        println(">>>")
+        println(getSyntax(inFile))
+        println(getSyntax(inFile))
+        println(">>>")
+        output shouldEqual (outFile)
       }
-    });
+    }
+  })
+
 }

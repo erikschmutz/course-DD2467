@@ -1,0 +1,14 @@
+Program(
+    List(
+        OperatorExpr(
+            IntLit(1),
+            IntLit(2),
+            Plus()
+        ),
+        OperatorExpr(
+            IntLit(3),
+            IntLit(1),
+            Plus()
+        )
+    )
+)

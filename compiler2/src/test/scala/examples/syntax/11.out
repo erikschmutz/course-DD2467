@@ -1,0 +1,20 @@
+Program(
+    List(
+        Assignment(
+            Identifier(a),
+            IntLit(10)
+        ),
+        Assignment(
+            Identifier(b),
+            IntLit(10)
+        ),
+        Assignment(
+            Identifier(c),
+            OperatorExpr(
+                Identifier(a),
+                Identifier(b),
+                Plus()
+            )
+        )
+    )
+)

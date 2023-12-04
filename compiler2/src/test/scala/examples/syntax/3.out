@@ -1,8 +1,8 @@
 Program(
     List(
         OperatorExpr(
+            Parentensis(IntLit(1)),
             IntLit(3),
-            IntLit(2),
             Plus()
         )
     )

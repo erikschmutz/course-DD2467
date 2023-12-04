@@ -1,4 +1,4 @@
-Let()
-IdentifierLowecaseIndent(a)
-Equal()
-IntLiteral(1)
+LET()
+IDENTIFIER(a)
+EQUAL()
+INT_LIT(1)
