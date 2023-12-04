@@ -89,10 +89,24 @@ object Parser extends PackratParsers {
     "Equal",
     { case Tokens.EQUAL() => Trees.Tokens.Equal() }
   )
-  val Identifier = accept(
+  val _Identifier = accept(
     "Identifier",
-    { case Tokens.IDENTIFIER(value) => Trees.Identifier(value) }
+    { case Tokens.IDENTIFIER(value) =>
+      Trees.Identifier(value, Option.empty)
+    }
   )
+  val Colon = accept(
+    "Identifier",
+    { case Tokens.COLON() =>
+      Trees.Tokens.Colon()
+    }
+  )
+  val TypedIdentifier = (_Identifier ~ Colon ~ _Identifier) ^^ {
+    case name ~ _ ~ _type =>
+      Trees.Identifier(name.value, Option(_type.value))
+  }
+  val Identifier = TypedIdentifier | _Identifier
+
   val Multiply = accept(
     "Multiply",
     { case Tokens.MULTIPLY() => Trees.Tokens.Multiply() }
@@ -125,13 +139,16 @@ object Parser extends PackratParsers {
   lazy val Expression: PackratParser[Trees.Expr] =
     OperatorExpr
   lazy val Statement: PackratParser[Trees.Expr] =
-    Expression | BindingAssignment | Assignment
+    Expression |
+      BindingAssignment |
+      Assignment
 
   lazy val Program: PackratParser[Trees.Program] = Statement.* ^^ { case list =>
     Trees.Program(list)
   };
 
   def evaluate(tokens: List[Tokens.TokenKind]) = {
+    print(tokens)
     phrase(Program)(new PackratReader(new TokenReader(tokens)))
 
   }

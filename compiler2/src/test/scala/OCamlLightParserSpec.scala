@@ -34,7 +34,7 @@ class OCamlLightParserSpec extends AnyFlatSpec with Matchers {
   getFilesFromDir("examples/tokens").forEach((file) => {
     val fileName = file.toAbsolutePath.toString
     if (fileName.endsWith(".in")) {
-      it should "be able to parse tokens from file " + file.getFileName in {
+      it should "be able to parse tokens from file Tokens" + file.getFileName in {
         val inFile = readFile(fileName);
         val outFile = readFile(fileName.replace(".in", ".out"));
         getTokens(inFile) shouldEqual (outFile)

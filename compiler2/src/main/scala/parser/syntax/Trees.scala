@@ -10,7 +10,15 @@ object Trees {
   abstract class Operator extends Tree
   abstract class Keyword extends Tree
 
-  case class Identifier(value: String) extends Expr
+  case class Identifier(value: String, varibleType: Option[String])
+      extends Expr {
+    override def toString() = {
+      varibleType match {
+        case Some(_type) => "Identifier(" + value + "," + _type + ")"
+        case None        => "Identifier(" + value + ")"
+      }
+    }
+  }
   case class TypedIdentifier(value: String) extends Expr
 
   object Tokens {
@@ -24,6 +32,7 @@ object Trees {
     case class Minus() extends Operator
     case class Multiply() extends Operator
     case class Divide() extends Operator
+    case class Colon() extends Operator
     case class Equal() extends Operator
 
     case class Let() extends Keyword

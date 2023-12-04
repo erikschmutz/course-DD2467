@@ -19,6 +19,7 @@ object Lexer extends RegexParsers {
 
   def OPEN_PARENTETHES = "\\(".r ^^ { _ => Tokens.OPEN_PARENTETHES() }
   def CLOSE_PARENTETHES = "\\)".r ^^ { _ => Tokens.CLOSE_PARENTETHES() }
+  def COLON = ":".r ^^ { _ => Tokens.COLON() }
 
   // literals and identifiers
   def INT_LIT = """\d+(\.\d*)?""".r ^^ { a => Tokens.INT_LIT(a.toInt) }
@@ -27,9 +28,9 @@ object Lexer extends RegexParsers {
   }
   def STR_LIT = "\".*\"".r ^^ { a => Tokens.STR_LIT(a.slice(1, a.length - 1)) }
   def CHAR_LIT = "\'.*\'".r ^^ { a => Tokens.CHAR_LIT(strip(a)) }
-  def IDENTIFIER = "[a-z]".r ^^ { a => Tokens.IDENTIFIER(a) }
+  def IDENTIFIER = "[a-z]+".r ^^ { a => Tokens.IDENTIFIER(a) }
 
-  def ALL = positioned {
+  def ALL = log(positioned {
     (
       OPEN_PARENTETHES |
         CLOSE_PARENTETHES |
@@ -37,6 +38,7 @@ object Lexer extends RegexParsers {
         EQUAL |
         PLUS |
         MINUS |
+        COLON |
         MULTIPLY |
         FLOAT_LIT |
         INT_LIT |
@@ -45,7 +47,7 @@ object Lexer extends RegexParsers {
         DIVIDE |
         IDENTIFIER
     )
-  }
+  })("Token")
 
   def evaluate(text: String) = {
     parseAll(rep(ALL), text)
