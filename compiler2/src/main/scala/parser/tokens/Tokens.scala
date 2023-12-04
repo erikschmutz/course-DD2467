@@ -30,4 +30,5 @@ object Tokens {
   case class OPEN_PARENTETHES() extends TokenKind
   case class CLOSE_PARENTETHES() extends TokenKind
   case class COLON() extends TokenKind
+  case class SEMICOLON() extends TokenKind
 }

@@ -122,7 +122,7 @@ object Parser extends PackratParsers {
       Trees.Assignment(identifier, value)
   }
   val BindingAssignment =
-    Let ~ repN(2, Identifier) ~ Equal ~ Expression ^^ {
+    Let ~ repNM(2, 10000, Identifier) ~ Equal ~ Expression ^^ {
       case (_ ~ identifier ~ _ ~ value) =>
         Trees.Assignment(
           identifier.head,

@@ -20,6 +20,7 @@ object Lexer extends RegexParsers {
   def OPEN_PARENTETHES = "\\(".r ^^ { _ => Tokens.OPEN_PARENTETHES() }
   def CLOSE_PARENTETHES = "\\)".r ^^ { _ => Tokens.CLOSE_PARENTETHES() }
   def COLON = ":".r ^^ { _ => Tokens.COLON() }
+  def SEMICOLON = ";;".r ^^ { _ => Tokens.SEMICOLON() }
 
   // literals and identifiers
   def INT_LIT = """\d+(\.\d*)?""".r ^^ { a => Tokens.INT_LIT(a.toInt) }
