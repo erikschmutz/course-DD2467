@@ -11,6 +11,7 @@ object Trees {
   abstract class Keyword extends Tree
 
   case class Identifier(value: String) extends Expr
+  case class TypedIdentifier(value: String) extends Expr
 
   object Tokens {
     case class IntLit(value: Integer) extends Expr
@@ -29,12 +30,15 @@ object Trees {
 
   }
 
-  case class Variable(name: String) extends Operator
-
   case class OperatorExpr(
       left: Expr,
       right: Expr,
       operator: Operator
+  ) extends Expr
+
+  case class LetBinding(
+      identifiers: List[Identifier],
+      expression: Expr
   ) extends Expr
 
   case class Assignment(

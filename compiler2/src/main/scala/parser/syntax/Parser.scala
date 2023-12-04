@@ -32,22 +32,21 @@ object Parser extends PackratParsers {
     override def pos: Position =
       tokens.headOption.map(_.pos).getOrElse(NoPosition)
     override def rest: Reader[Tokens.TokenKind] = {
-      println("tokens", tokens.tail)
       new TokenReader(tokens.tail)
     }
   }
 
-  def OpenParantheses =
+  val OpenParantheses =
     accept(
       "Parentensis",
       { case Tokens.OPEN_PARENTETHES() => Trees.Tokens.OpenParantheses() }
     )
-  def CloseParantheses =
+  val CloseParantheses =
     accept(
       "Close Parantheses",
       { case Tokens.CLOSE_PARENTETHES() => Trees.Tokens.CloseParantheses() }
     )
-  def IntLit =
+  val IntLit =
     log(
       accept(
         "Int",
@@ -56,7 +55,7 @@ object Parser extends PackratParsers {
     )(
       "IntLit"
     )
-  def StringLit =
+  val StringLit =
     log(
       accept(
         "Int",
@@ -65,57 +64,57 @@ object Parser extends PackratParsers {
     )(
       "IntLit"
     )
-  def FloatLit =
+  val FloatLit =
     accept(
       "FloatLit",
       { case Tokens.FLOAT_LIT(value) => Trees.Tokens.FloatLit(value) }
     )
-  def Plus = accept(
+  val Plus = accept(
     "Plus",
     { case Tokens.PLUS() => Trees.Tokens.Plus() }
   )
-  def Divide = accept(
+  val Divide = accept(
     "Plus",
     { case Tokens.DIVIDE() => Trees.Tokens.Divide() }
   )
-  def Minus = accept(
+  val Minus = accept(
     "Minus",
     { case Tokens.MINUS() => Trees.Tokens.Minus() }
   )
-  def Let = accept(
+  val Let = accept(
     "Let",
     { case Tokens.LET() => Trees.Tokens.Let() }
   )
-
-  def Equal = accept(
+  val Equal = accept(
     "Equal",
     { case Tokens.EQUAL() => Trees.Tokens.Equal() }
   )
-
-  def Identifier = accept(
+  val Identifier = accept(
     "Identifier",
     { case Tokens.IDENTIFIER(value) => Trees.Identifier(value) }
   )
-
-  def Multiply = accept(
+  val Multiply = accept(
     "Multiply",
     { case Tokens.MULTIPLY() => Trees.Tokens.Multiply() }
   )
-
-  def Operator = Plus | Minus | Multiply | Divide
-
-  def Primitive = IntLit | FloatLit | StringLit | Identifier;
-
-  def ParentethisedExpr =
+  val Operator = Plus | Minus | Multiply | Divide
+  val Primitive = IntLit | FloatLit | StringLit | Identifier;
+  val ParentethisedExpr =
     OpenParantheses ~> (OperatorExpr) <~ CloseParantheses ^^ { case a =>
       Trees.Parentensis(a)
     }
-
-  def Assignment = Let ~ Identifier ~ Equal ~ Expression ^^ {
+  val Assignment = Let ~ Identifier ~ Equal ~ Expression ^^ {
     case (_ ~ identifier ~ _ ~ value) =>
       Trees.Assignment(identifier, value)
   }
-
+  val BindingAssignment =
+    Let ~ repN(2, Identifier) ~ Equal ~ Expression ^^ {
+      case (_ ~ identifier ~ _ ~ value) =>
+        Trees.Assignment(
+          identifier.head,
+          Trees.LetBinding(identifier.tail, value)
+        )
+    }
   lazy val OperatorExpr: PackratParser[Trees.Expr] =
     chainl1(
       (ParentethisedExpr | Primitive),
@@ -123,22 +122,18 @@ object Parser extends PackratParsers {
         Trees.OperatorExpr(l, r, op)
       }
     )
-
   lazy val Expression: PackratParser[Trees.Expr] =
     OperatorExpr
-
   lazy val Statement: PackratParser[Trees.Expr] =
-    Expression | Assignment
+    Expression | BindingAssignment | Assignment
 
   lazy val Program: PackratParser[Trees.Program] = Statement.* ^^ { case list =>
     Trees.Program(list)
   };
 
   def evaluate(tokens: List[Tokens.TokenKind]) = {
-    println(">>>>>>>>>", tokens, "<<<<<<<<<<")
-    val result = phrase(Program)(new PackratReader(new TokenReader(tokens)))
-    println(">>", result)
-    result
+    phrase(Program)(new PackratReader(new TokenReader(tokens)))
+
   }
 
 }

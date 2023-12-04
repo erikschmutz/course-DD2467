@@ -57,10 +57,7 @@ class OCamlLightParserSpec extends AnyFlatSpec with Matchers {
           .replace(" ", "")
           .replace("\n", "");
 
-        println(">>>")
-        println(getSyntax(inFile))
-        println(getSyntax(inFile))
-        println(">>>")
+        print(output)
         output shouldEqual (outFile)
       }
     }
