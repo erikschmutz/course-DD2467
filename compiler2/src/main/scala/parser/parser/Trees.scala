@@ -10,8 +10,7 @@ object Trees {
   abstract class Operator extends Tree
   abstract class Keyword extends Tree
 
-  case class Identifier(value: String, varibleType: Option[String])
-      extends Expr {
+  case class Identifier(value: String, varibleType: Option[String]) extends Expr {
     override def toString() = {
       varibleType match {
         case Some(_type) => "Identifier(" + value + "," + _type + ")"
@@ -48,6 +47,11 @@ object Trees {
   case class LetBinding(
       identifiers: List[Identifier],
       expression: Expr
+  ) extends Expr
+
+  case class Substitutions(
+      value_name: Identifier,
+      values: List[Expr]
   ) extends Expr
 
   case class Assignment(
