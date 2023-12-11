@@ -42,7 +42,7 @@ object Parser extends Parsers {
     }
   }
 
-  object Atoms {
+  object Terminals {
     val OpenParantheses =
       accept(
         "Parentensis",
@@ -116,7 +116,7 @@ object Parser extends Parsers {
 
   def TypedIdentifier =
     (
-      Atoms.Identifier ~ Atoms.Colon ~ Atoms.Identifier
+      Terminals.Identifier ~ Terminals.Colon ~ Terminals.Identifier
     ) ^^ { case name ~ _ ~ _type =>
       Trees.Identifier(name.value, Option(_type.value))
     }
@@ -125,11 +125,11 @@ object Parser extends Parsers {
     (a /: b)((acc, f) => f(acc))
   }
 
-  def AddExpr = (Atoms.Plus ~> Term) ^^ { case a =>
+  def AddExpr = (Terminals.Plus ~> Term) ^^ { case a =>
     Trees.OperatorExpr(_, a, Trees.Tokens.Plus())
   }
 
-  def MinusExpr = (Atoms.Plus ~> Term) ^^ { case a =>
+  def MinusExpr = (Terminals.Plus ~> Term) ^^ { case a =>
     Trees.OperatorExpr(_, a, Trees.Tokens.Minus())
   }
 
@@ -137,21 +137,21 @@ object Parser extends Parsers {
     (a /: b)((acc, f) => f(acc))
   }
 
-  def MultiplyExpr = (Atoms.Multiply ~> Factor) ^^ { case a =>
+  def MultiplyExpr = (Terminals.Multiply ~> Factor) ^^ { case a =>
     Trees.OperatorExpr(_, a, Trees.Tokens.Multiply())
   }
 
-  def DivideExpr = (Atoms.Divide ~> Factor) ^^ { case a =>
+  def DivideExpr = (Terminals.Divide ~> Factor) ^^ { case a =>
     Trees.OperatorExpr(_, a, Trees.Tokens.Divide())
   }
 
-  def Factor = Primitive | (Atoms.OpenParantheses ~> (OperatorExpr) <~ Atoms.CloseParantheses)
+  def Factor = Primitive | (Terminals.OpenParantheses ~> (OperatorExpr) <~ Terminals.CloseParantheses)
 
-  def Identifier = TypedIdentifier | Atoms.Identifier
-  def Operator = Atoms.Plus | Atoms.Minus | Atoms.Multiply | Atoms.Divide
-  def Primitive = Atoms.IntLit | Atoms.FloatLit | Atoms.StringLit | Atoms.Identifier;
+  def Identifier = TypedIdentifier | Terminals.Identifier
+  def Operator = Terminals.Plus | Terminals.Minus | Terminals.Multiply | Terminals.Divide
+  def Primitive = Terminals.IntLit | Terminals.FloatLit | Terminals.StringLit | Terminals.Identifier;
 
-  def Assignment = Atoms.Let ~ Identifier ~ Atoms.Equal ~ Expression ^^ { case (_ ~ identifier ~ _ ~ value) =>
+  def Assignment = Terminals.Let ~ Identifier ~ Terminals.Equal ~ Expression ^^ { case (_ ~ identifier ~ _ ~ value) =>
     Trees.Assignment(identifier, value)
   }
 
@@ -160,11 +160,11 @@ object Parser extends Parsers {
   }
 
   def BindingAssignment =
-    Atoms.Let ~ repNM(
+    Terminals.Let ~ repNM(
       2,
       Integer.MAX_VALUE,
       Identifier
-    ) ~ Atoms.Equal ~ Expression ^^ { case (_ ~ identifier ~ _ ~ value) =>
+    ) ~ Terminals.Equal ~ Expression ^^ { case (_ ~ identifier ~ _ ~ value) =>
       Trees.Assignment(
         identifier.head,
         Trees.LetBinding(identifier.tail, value)
