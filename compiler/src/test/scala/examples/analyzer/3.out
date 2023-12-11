@@ -1,1 +1,14 @@
-Integer()
+AnalyzerResult(
+    Integer(),
+    Enviroment(
+        List(
+            EnviromentEntry(
+                Identifier(a),Integer()
+            ),
+            EnviromentEntry(
+                Identifier(b),
+                Integer()
+            )
+        )
+    )
+)

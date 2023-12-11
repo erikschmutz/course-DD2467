@@ -76,7 +76,7 @@ class OCamlLightParserSpec extends AnyFlatSpec with Matchers {
   getFilesFromDir("examples/analyzer").forEach((file) => {
     val fileName = file.toAbsolutePath.toString
     if (fileName.endsWith(".in")) {
-      it should "be able to analyze syntax from file " + file.getFileName in {
+      it should "be able to analyze syntax from file Analyzer." + file.getFileName in {
         val inFile = readFile(fileName);
         // removes white space
         val outFile = readFile(fileName.replace(".in", ".out"))

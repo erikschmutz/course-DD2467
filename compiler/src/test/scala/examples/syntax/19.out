@@ -1,0 +1,37 @@
+
+Program(
+    List(
+        Assignment(
+            Identifier(a),
+            LetBinding(
+                List(
+                    Identifier(b)
+                ),
+            OperatorExpr(
+                Identifier(b),
+                IntLit(1),
+                Plus()
+            )
+        )
+    ),
+    Assignment(
+        Identifier(b),
+        LetBinding(
+            List(Identifier(c)),
+            Substitutions(
+                Identifier(c),
+                List(IntLit(1))
+                )
+                )
+            ),
+            Assignment(
+                Identifier(c),
+                Substitutions(
+                    Identifier(b),
+                    List(
+                        Identifier(a)
+                    )
+                )
+            )
+        )
+    )

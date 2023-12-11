@@ -1,0 +1,65 @@
+import ocaml.trees._
+import ocaml.types._
+import ocaml.enviroment._
+
+case class AnalyzerResult(ok: Boolean, _type: String) {}
+
+object Analyzer {
+  type T = Option[Types.Type]
+
+  def evaluate(tree: Trees.Tree, enviroment: Enviroment): T = {
+    tree match {
+      case a: Trees.Tokens.IntLit    => evaluate(a)
+      case a: Trees.Tokens.StringLit => evaluate(a)
+      case a: Trees.OperatorExpr     => evaluate(a, enviroment)
+      case a: Trees.Assignment       => evaluate(a, enviroment)
+      case a: Trees.Identifier       => evaluate(a, enviroment)
+      case _                         => None
+    }
+  }
+
+  def evaluate(tree: Trees.Tokens.StringLit): T = {
+    Option(Types.String())
+  }
+
+  def evaluate(tree: Trees.Identifier, enviroment: Enviroment): T = {
+    Option(Types.String())
+  }
+
+  def evaluate(tree: Trees.Assignment, enviroment: Enviroment): T = {
+    evaluate(tree.exprs, enviroment)
+  }
+
+  def evaluate(tree: Trees.Tokens.IntLit): T = {
+    Option(Types.Integer())
+  }
+
+  def evaluate(tree: Trees.OperatorExpr, enviroment: Enviroment): T = {
+    val left = evaluate(tree.left, enviroment)
+    val right = evaluate(tree.right, enviroment)
+
+    (left, tree.operator, right) match {
+      case (Some(a: Types.Integer), b: Trees.Tokens.Plus, Some(c: Types.Integer)) => Some(Types.Integer())
+      case _                                                                      => None
+    }
+  }
+
+  def evaluate(trees: List[Trees.Tree], enviroment: Enviroment): Option[Types.Type] = {
+    trees match {
+      case head :: Nil => {
+        evaluate(head, enviroment)
+      }
+      case head :: rest => {
+        evaluate(head, enviroment) match {
+          case Some(a) => evaluate(rest, enviroment)
+          case None    => None
+        }
+      }
+      case Nil => None
+    }
+  }
+
+  def evaluate(prog: Trees.Program): Option[Types.Type] = {
+    evaluate(prog.statements, new Enviroment(List()))
+  }
+}
