@@ -56,7 +56,7 @@ object Trees {
 
   case class Assignment(
       variable: Identifier,
-      operator: Expr
+      exprs: Expr
   ) extends Expr
 
   case class Empty(

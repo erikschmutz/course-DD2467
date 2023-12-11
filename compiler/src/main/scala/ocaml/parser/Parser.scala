@@ -54,23 +54,17 @@ object Parser extends Parsers {
         { case Tokens.CLOSE_PARENTETHES() => Trees.Tokens.CloseParantheses() }
       )
     val IntLit =
-      log(
-        accept(
-          "Int",
-          { case Tokens.INT_LIT(value) => Trees.Tokens.IntLit(value) }
-        )
-      )(
-        "IntLit"
+      accept(
+        "Int",
+        { case Tokens.INT_LIT(value) => Trees.Tokens.IntLit(value) }
       )
+
     val StringLit =
-      log(
-        accept(
-          "Int",
-          { case Tokens.STR_LIT(value) => Trees.Tokens.StringLit(value) }
-        )
-      )(
-        "IntLit"
+      accept(
+        "Int",
+        { case Tokens.STR_LIT(value) => Trees.Tokens.StringLit(value) }
       )
+
     val FloatLit =
       accept(
         "FloatLit",

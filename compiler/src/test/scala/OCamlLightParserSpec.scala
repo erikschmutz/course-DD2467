@@ -29,6 +29,14 @@ class OCamlLightParserSpec extends AnyFlatSpec with Matchers {
       .toString
   }
 
+  def getAnalyzer(value: String): String = {
+    OCamlLightParser
+      .analyze(value) match {
+      case None        => None.toString()
+      case Some(value) => value.toString()
+    }
+  }
+
   "Lexer" should "exists" in {}
 
   getFilesFromDir("examples/tokens").forEach((file) => {
@@ -54,6 +62,28 @@ class OCamlLightParserSpec extends AnyFlatSpec with Matchers {
           .replace("\n", "");
 
         val output = getSyntax(inFile)
+          .replace(" ", "")
+          .replace("\n", "");
+
+        print(output)
+        output shouldEqual (outFile)
+      }
+    }
+  })
+
+  "Analyzer" should "exists" in {}
+
+  getFilesFromDir("examples/analyzer").forEach((file) => {
+    val fileName = file.toAbsolutePath.toString
+    if (fileName.endsWith(".in")) {
+      it should "be able to analyze syntax from file " + file.getFileName in {
+        val inFile = readFile(fileName);
+        // removes white space
+        val outFile = readFile(fileName.replace(".in", ".out"))
+          .replace(" ", "")
+          .replace("\n", "");
+
+        val output = getAnalyzer(inFile)
           .replace(" ", "")
           .replace("\n", "");
 

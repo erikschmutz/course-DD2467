@@ -7,4 +7,9 @@ object OCamlLightParser {
     val tokens = parseTokens(value).get;
     Parser.evaluate(tokens)
   }
+
+  def analyze(value: String) = {
+    val tree = parseSyntax(value).get
+    Analyzer.evaluate(tree)
+  }
 }
