@@ -13,6 +13,7 @@ object Analyzer {
       case a: Trees.Tokens.StringLit => evaluate(a)
       case a: Trees.OperatorExpr     => evaluate(a, enviroment)
       case a: Trees.Assignment       => evaluate(a, enviroment)
+      case a: Trees.LetBinding       => evaluate(a, enviroment)
       case a: Trees.Identifier       => evaluate(a, enviroment)
       case _                         => None
     }
@@ -23,6 +24,9 @@ object Analyzer {
   }
 
   def evaluate(tree: Trees.Identifier, enviroment: Enviroment): T = {
+    Option(Types.String())
+  }
+  def evaluate(tree: Trees.Let, enviroment: Enviroment): T = {
     Option(Types.String())
   }
 

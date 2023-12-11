@@ -37,6 +37,14 @@ class OCamlLightParserSpec extends AnyFlatSpec with Matchers {
     }
   }
 
+  def getAnalyzerPretty(value: String): String = {
+    OCamlLightParser
+      .analyze(value) match {
+      case None        => None.toString()
+      case Some(value) => value.prettyPrint
+    }
+  }
+
   "Lexer" should "exists" in {}
 
   getFilesFromDir("examples/tokens").forEach((file) => {
@@ -87,7 +95,7 @@ class OCamlLightParserSpec extends AnyFlatSpec with Matchers {
           .replace(" ", "")
           .replace("\n", "");
 
-        print(output)
+        print(getAnalyzerPretty(inFile))
         output shouldEqual (outFile)
       }
     }

@@ -1,0 +1,15 @@
+AnalyzerResult(
+    Integer(),
+    Enviroment(
+        List(
+            EnviromentEntry(
+                Identifier(a),
+                Function(
+                    List(Integer()
+                ),
+                Integer()
+                )
+            )
+        )
+    )
+)
