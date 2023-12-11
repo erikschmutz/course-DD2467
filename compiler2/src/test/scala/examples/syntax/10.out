@@ -2,12 +2,10 @@ Program(
     List(
         Assignment(
             Identifier(i),
-            Parentensis(
-                OperatorExpr(
-                    IntLit(1),
-                    IntLit(2),
-                    Plus()
-                )
+            OperatorExpr(
+                IntLit(1),
+                IntLit(2),
+                Plus()
             )
         )
     )

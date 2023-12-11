@@ -31,24 +31,22 @@ object Lexer extends RegexParsers {
   def CHAR_LIT = "\'.*\'".r ^^ { a => Tokens.CHAR_LIT(strip(a)) }
   def IDENTIFIER = "[a-z]+".r ^^ { a => Tokens.IDENTIFIER(a) }
 
-  def ALL = log(positioned {
-    (
-      OPEN_PARENTETHES |
-        CLOSE_PARENTETHES |
-        LET |
-        EQUAL |
-        PLUS |
-        MINUS |
-        COLON |
-        MULTIPLY |
-        FLOAT_LIT |
-        INT_LIT |
-        STR_LIT |
-        CHAR_LIT |
-        DIVIDE |
-        IDENTIFIER
-    )
-  })("Token")
+  def ALL = positioned {
+    OPEN_PARENTETHES |
+      CLOSE_PARENTETHES |
+      LET |
+      EQUAL |
+      PLUS |
+      MINUS |
+      COLON |
+      MULTIPLY |
+      FLOAT_LIT |
+      INT_LIT |
+      STR_LIT |
+      CHAR_LIT |
+      DIVIDE |
+      IDENTIFIER
+  }
 
   def evaluate(text: String) = {
     parseAll(rep(ALL), text)

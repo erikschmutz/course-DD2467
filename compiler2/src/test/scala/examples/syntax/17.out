@@ -9,15 +9,11 @@ Program(
                     IntLit(2),
                     Multiply()
                 )
-            )
-        ),
-        Assignment(
-            Identifier(r),
-            Substitutions(
-                Identifier(f),
-                    List(IntLit(3)
-                )
-            )
+        )
+    ),
+    Substitutions(
+        Identifier(f),
+            List(IntLit(1))
         )
     )
 )

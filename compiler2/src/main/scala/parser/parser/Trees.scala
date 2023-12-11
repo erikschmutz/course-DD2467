@@ -59,10 +59,6 @@ object Trees {
       operator: Expr
   ) extends Expr
 
-  case class Parentensis(
-      content: Expr
-  ) extends Expr
-
   case class Empty(
   ) extends Expr
 

@@ -15,24 +15,7 @@
   Primitive         ::= IntLit | FloatLit | StringLit | Identifier
   TypedIdentifier   ::= Identifier Colon Identifier
   Identifier        ::= _Identifier | TypedIdentifier
-  _Identifier       ::= _Identifier
-  IntLit            ::= IntLit
-  FloatLit          ::= FloatLit
-  StringLit         ::= StringLit
-  Colon             ::= Colon
-  Plus              ::= Plus
 
-  Divide            ::= Divide
-
-  Minus             ::= Minus
-
-  Let               ::= Let
-
-  Equal             ::= Equal
-
-  OpenParantheses   ::= OpenParantheses
-
-  CloseParantheses  ::= CloseParantheses
  */
 import scala.util.parsing.combinator.{RegexParsers, Parsers}
 import ocaml.tokens._
@@ -131,41 +114,52 @@ object Parser extends Parsers {
     )
   }
 
-  lazy val TypedIdentifier =
+  def TypedIdentifier =
     (
       Atoms.Identifier ~ Atoms.Colon ~ Atoms.Identifier
     ) ^^ { case name ~ _ ~ _type =>
       Trees.Identifier(name.value, Option(_type.value))
     }
 
-  lazy val ParentethisedExpr =
-    (Atoms.OpenParantheses ~> (OperatorExpr) <~ Atoms.CloseParantheses) ^^ { case a =>
-      Trees.Parentensis(a)
-    }
+  def OperatorExpr: Parser[Trees.Expr] = Term ~ rep(AddExpr | MinusExpr) ^^ { case a ~ b =>
+    (a /: b)((acc, f) => f(acc))
+  }
 
-  lazy val OperatorExpr: Parser[Trees.Expr] =
-    chainl1(
-      ParentethisedExpr | Primitive,
-      Operator ^^ { op => (l, r) =>
-        Trees.OperatorExpr(l, r, op)
-      }
-    )
+  def AddExpr = (Atoms.Plus ~> Term) ^^ { case a =>
+    Trees.OperatorExpr(_, a, Trees.Tokens.Plus())
+  }
 
-  lazy val Identifier = TypedIdentifier | Atoms.Identifier
+  def MinusExpr = (Atoms.Plus ~> Term) ^^ { case a =>
+    Trees.OperatorExpr(_, a, Trees.Tokens.Minus())
+  }
 
-  lazy val Operator = Atoms.Plus | Atoms.Minus | Atoms.Multiply | Atoms.Divide
-  lazy val Primitive =
-    Atoms.IntLit | Atoms.FloatLit | Atoms.StringLit | Atoms.Identifier;
+  def Term = Factor ~ rep(MultiplyExpr | DivideExpr) ^^ { case a ~ b =>
+    (a /: b)((acc, f) => f(acc))
+  }
 
-  lazy val Assignment = Atoms.Let ~ Identifier ~ Atoms.Equal ~ Expression ^^ { case (_ ~ identifier ~ _ ~ value) =>
+  def MultiplyExpr = (Atoms.Multiply ~> Factor) ^^ { case a =>
+    Trees.OperatorExpr(_, a, Trees.Tokens.Multiply())
+  }
+
+  def DivideExpr = (Atoms.Divide ~> Factor) ^^ { case a =>
+    Trees.OperatorExpr(_, a, Trees.Tokens.Divide())
+  }
+
+  def Factor = Primitive | (Atoms.OpenParantheses ~> (OperatorExpr) <~ Atoms.CloseParantheses)
+
+  def Identifier = TypedIdentifier | Atoms.Identifier
+  def Operator = Atoms.Plus | Atoms.Minus | Atoms.Multiply | Atoms.Divide
+  def Primitive = Atoms.IntLit | Atoms.FloatLit | Atoms.StringLit | Atoms.Identifier;
+
+  def Assignment = Atoms.Let ~ Identifier ~ Atoms.Equal ~ Expression ^^ { case (_ ~ identifier ~ _ ~ value) =>
     Trees.Assignment(identifier, value)
   }
 
-  lazy val Substitutions: Parser[Trees.Substitutions] = Identifier ~ rep1(Expression) ^^ { case value ~ substitutions =>
+  def Substitutions: Parser[Trees.Substitutions] = Identifier ~ rep1(Expression) ^^ { case value ~ substitutions =>
     Trees.Substitutions(value, substitutions)
   }
 
-  lazy val BindingAssignment =
+  def BindingAssignment =
     Atoms.Let ~ repNM(
       2,
       Integer.MAX_VALUE,
@@ -176,13 +170,11 @@ object Parser extends Parsers {
         Trees.LetBinding(identifier.tail, value)
       )
     }
-  lazy val Expression =
-    Substitutions | OperatorExpr
 
-  lazy val Definition = (BindingAssignment | Assignment)
-  lazy val Statement = Definition | Expression
-
-  lazy val Program = (Statement).* ^^ { case list =>
+  def Expression = Substitutions | OperatorExpr
+  def Definition = (BindingAssignment | Assignment)
+  def Statement = Definition | Expression
+  def Program = (Statement).* ^^ { case list =>
     Trees.Program(list)
   };
 
