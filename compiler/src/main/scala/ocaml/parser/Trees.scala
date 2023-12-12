@@ -45,7 +45,7 @@ object Trees {
   ) extends Expr
 
   case class LetBinding(
-      identifiers: Identifier,
+      identifier: Trees.Tree,
       expression: Expr
   ) extends Expr
 

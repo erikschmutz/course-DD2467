@@ -1,0 +1,18 @@
+Program(
+    List(
+        Assignment(
+            Identifier(f),
+            LetBinding(
+                Identifier(a),
+                LetBinding(
+                    Identifier(b),
+                    OperatorExpr(
+                        Identifier(a),
+                        Identifier(b),
+                        Plus()
+                    )
+                )
+            )
+        )
+    )
+)

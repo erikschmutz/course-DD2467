@@ -3,17 +3,17 @@ Program(
         Assignment(
             Identifier(f),
             LetBinding(
-                List(Identifier(a)),
+                Identifier(a),
                 OperatorExpr(
                     Identifier(a),
                     IntLit(2),
                     Multiply()
                 )
-        )
-    ),
-    Substitutions(
-        Identifier(f),
-            List(IntLit(1))
+            )
+        ),
+        Substitutions(
+            Identifier(f),
+            IntLit(1)
         )
     )
 )

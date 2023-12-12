@@ -3,13 +3,10 @@ Program(
         Assignment(
             Identifier(f),
             LetBinding(
-                List(
-                    Identifier(a,int),
-                    Identifier(b,int)
-                ),
+                Identifier(a,int),
                 OperatorExpr(
                     Identifier(a),
-                    Identifier(b),
+                    IntLit(1),
                     Plus()
                 )
             )

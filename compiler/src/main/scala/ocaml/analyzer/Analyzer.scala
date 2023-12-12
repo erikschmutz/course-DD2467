@@ -22,12 +22,10 @@ object Analyzer {
   def evaluate(tree: Trees.Tree, enviroment: Enviroment): T = {
     tree match {
       case a: Trees.Tokens.IntLit => evaluate(a, enviroment)
-      case a: Trees.Assignment    => evaluate(a, enviroment)
-      case a: Trees.LetBinding    => evaluate(a, enviroment)
-      case a: Trees.Substitutions => evaluate(a, enviroment)
-      case a: Trees.OperatorExpr  => evaluate(a, enviroment)
-      case a: Trees.Identifier    => evaluate(a, enviroment)
-      case _                      => None
+      // case a: Trees.Substitutions => evaluate(a, enviroment)
+      // case a: Trees.OperatorExpr  => evaluate(a, enviroment)
+      // case a: Trees.Identifier    => evaluate(a, enviroment)
+      case _ => None
     }
   }
 

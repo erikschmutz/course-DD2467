@@ -164,21 +164,26 @@ object Parser extends Parsers {
       (id.asInstanceOf[Trees.Expr] /: substitutions)((acc, f) => f(acc))
     }
   }
+  def BindingAssignment: Parser[Trees.Expr => Trees.LetBinding] = (Identifier | Expression) ^^ {
+    case value => {
+      Trees.LetBinding(value, _)
+    }
+  }
 
-  def BindingAssignment =
-    Terminals.Let ~ repNM(
-      2,
+  def BindingAssignments =
+    Terminals.Let ~ Identifier ~ repNM(
+      1,
       Integer.MAX_VALUE,
-      Identifier
-    ) ~ Terminals.Equal ~ Expression ^^ { case (_ ~ identifier ~ _ ~ value) =>
+      BindingAssignment
+    ) ~ Terminals.Equal ~ Expression ^^ { case (_ ~ identifier ~ lets ~ _ ~ value) =>
       Trees.Assignment(
-        identifier.head,
-        Trees.LetBinding(identifier.tail, value)
+        identifier,
+        (lets.foldRight(value))((f, acc) => f(acc))
       )
     }
 
-  def Expression = Substitutions | OperatorExpr
-  def Definition = (Assignment)
+  def Expression: Parser[Trees.Expr] = Substitutions | OperatorExpr
+  def Definition = (BindingAssignments | Assignment)
   def Program = (Expression | Definition).* ^^ { case list =>
     Trees.Program(list)
   };

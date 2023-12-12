@@ -1,1 +1,5 @@
-AnalyzerResult(Integer(),Enviroment(List()))
+AnalyzerResult(
+        Integer(),
+        Enviroment(List()
+    )
+)

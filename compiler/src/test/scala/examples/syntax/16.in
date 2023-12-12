@@ -1,2 +1,0 @@
-let f a = a * 2
-let r = f 3
