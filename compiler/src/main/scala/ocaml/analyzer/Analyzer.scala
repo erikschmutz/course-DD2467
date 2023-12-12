@@ -23,64 +23,35 @@ object Analyzer {
     tree match {
       case a: Trees.Tokens.IntLit => evaluate(a, enviroment)
       case a: Trees.Assignment    => evaluate(a, enviroment)
+      case a: Trees.LetBinding    => evaluate(a, enviroment)
+      case a: Trees.Substitutions => evaluate(a, enviroment)
       case a: Trees.OperatorExpr  => evaluate(a, enviroment)
       case a: Trees.Identifier    => evaluate(a, enviroment)
-      case a: Trees.Substitutions => evaluate(a, enviroment)
-      case a: Trees.LetBinding    => evaluate(a, enviroment)
       case _                      => None
     }
   }
 
-  def evaluate(identifier: Trees.Identifier, enviroment: Enviroment): T = {
-    enviroment.lookup(identifier) match {
-      case Some(value) => Some(AnalyzerResult(value._type, enviroment, identifier))
+  def evaluate(tree: Trees.Identifier, enviroment: Enviroment): T = {
+    enviroment.lookup(tree) match {
+      case Some(value) => Some(AnalyzerResult(value._type, enviroment, tree))
       case None        => None
     }
   }
 
-  def evaluate(identifier: Trees.Substitutions, enviroment: Enviroment): T = {
-    enviroment.lookup(identifier.value_name) match {
-      case Some(value) => {
-        val args = identifier.values.map(value => evaluate(value, enviroment).get._type);
-        Some(
-          AnalyzerResult(
-            value._type,
-            enviroment.replace(
-              identifier.value_name,
-              Types.Function(args, value._type)
-            ),
-            identifier
-          )
-        )
-      }
-      case None => None
-    }
-  }
-
-  def evaluate(tree: Trees.Tokens.IntLit, enviroment: Enviroment): T = {
-    Some(
-      AnalyzerResult(Types.Integer(), enviroment, tree)
-    )
-  }
-
-  def evaluate(tree: Trees.Assignment, enviroment: Enviroment): T = {
-    evaluate(tree.exprs, enviroment) match {
-      case Some(value) => {
-        println("Value")
-
-        Some(
-          AnalyzerResult(
-            Types.Integer(),
-            enviroment.copyWith(
-              EnviromentEntry(tree.variable, value._type)
-            ),
-            tree
-          )
-        )
-      }
-      case None => None
-    }
-  }
+  // def evaluate(tree: Trees.LetBinding, enviroment: Enviroment): T = {
+  //   evaluate(
+  //     tree.expression,
+  //     enviroment.copyWith(
+  //       tree.identifiers.map((v) => EnviromentEntry(v, Types.Unknown("'" + v.value), v))
+  //     )
+  //   ) match {
+  //     case Some(value) => {
+  //       val types = tree.identifiers.map((v) => value.enviroment.lookup(v).get._type)
+  //       Some(AnalyzerResult(Types.Function(types, value._type), enviroment, tree))
+  //     }
+  //     case None => None
+  //   }
+  // }
 
   def evaluate(tree: Trees.OperatorExpr, enviroment: Enviroment): T = {
     val left = evaluate(tree.left, enviroment)
@@ -103,18 +74,77 @@ object Analyzer {
     }
   }
 
-  def evaluate(tree: Trees.LetBinding, enviroment: Enviroment): T = {
-    evaluate(
-      tree.expression,
-      enviroment.copyWith(
-        tree.identifiers.map((v) => EnviromentEntry(v, Types.Unknown("'" + v.value)))
-      )
-    ) match {
-      case Some(value) => {
-        val types = tree.identifiers.map((v) => value.enviroment.lookup(v).get._type)
-        Some(AnalyzerResult(Types.Function(types, value._type), enviroment, tree))
+  // def evaluate(tree: Trees.Substitutions, enviroment: Enviroment): T = {
+  //   val argsType = tree.values.map(arg => {
+  //     evaluate(arg, enviroment) match {
+  //       case None        => return None
+  //       case Some(value) => value._type
+  //     }
+  //   })
+
+  //   enviroment.lookup(tree.value_name) match {
+  //     case None => return None
+  //     case Some(value) => {
+  //       value._type match {
+  //         case f: Types.Function => {
+  //           println("func")
+  //           println(tree.value_name)
+  //           println(f)
+  //           for (index <- Range(0, f.input.length)) {
+  //             if (
+  //               !(f.input(index) == value || f.input(index).isInstanceOf[Types.Unknown] || argsType(index)
+  //                 .isInstanceOf[Types.Unknown])
+  //             ) {
+  //               return None
+  //             }
+  //           }
+  //           return Some(AnalyzerResult(f.output, enviroment, tree))
+  //         }
+  //         case _ => {
+  //           None
+  //           // val args = tree.values.map(value => evaluate(value, enviroment).get._type);
+  //           // Some(
+  //           //   AnalyzerResult(
+  //           //     value._type,
+  //           //     enviroment.replace(
+  //           //       tree.value_name,
+  //           //       Types.Function(args, value._type)
+  //           //     ),
+  //           //     tree
+  //           //   )
+  //           // )
+  //         }
+  //       }
+  //     }
+  //   }
+
+  // }
+
+  def evaluate(tree: Trees.Tokens.IntLit, enviroment: Enviroment): T = {
+    Some(
+      AnalyzerResult(Types.Integer(), enviroment, tree)
+    )
+  }
+
+  def evaluate(tree: Trees.Assignment, enviroment: Enviroment): T = {
+    enviroment.lookup(tree.variable) match {
+      case None => {
+        evaluate(tree.exprs, enviroment) match {
+          case Some(value) => {
+            Some(
+              AnalyzerResult(
+                value._type,
+                enviroment.copyWith(
+                  EnviromentEntry(tree.variable, value._type, tree)
+                ),
+                tree
+              )
+            )
+          }
+          case None => None
+        }
       }
-      case None => None
+      case Some(value) => None
     }
   }
 
@@ -135,6 +165,7 @@ object Analyzer {
 
   def evaluate(prog: Trees.Program): T = {
     val result = evaluate(prog.statements, Enviroment(List()))
+
     result
   }
 }

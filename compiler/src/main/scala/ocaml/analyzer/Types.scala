@@ -9,6 +9,7 @@ object Types {
 
   case class Unknown(id: String) extends Type {
     def prettyPrint: String = id
+
   }
   case class Integer() extends Type {
     def prettyPrint: String = "int"

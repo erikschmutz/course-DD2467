@@ -1,0 +1,11 @@
+Program(
+    List(
+        Substitutions(
+            Substitutions(
+                Identifier(f),
+                IntLit(10)
+            ),
+            IntLit(20)
+        )
+    )
+)

@@ -45,13 +45,13 @@ object Trees {
   ) extends Expr
 
   case class LetBinding(
-      identifiers: List[Identifier],
+      identifiers: Identifier,
       expression: Expr
   ) extends Expr
 
   case class Substitutions(
-      value_name: Identifier,
-      values: List[Expr]
+      value_name: Tree,
+      values: Expr
   ) extends Expr
 
   case class Assignment(

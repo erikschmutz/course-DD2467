@@ -16,6 +16,9 @@
   TypedIdentifier   ::= Identifier Colon Identifier
   Identifier        ::= _Identifier | TypedIdentifier
 
+
+
+
  */
 import scala.util.parsing.combinator.{RegexParsers, Parsers}
 import ocaml.tokens._
@@ -148,9 +151,18 @@ object Parser extends Parsers {
   def Assignment = Terminals.Let ~ Identifier ~ Terminals.Equal ~ Expression ^^ { case (_ ~ identifier ~ _ ~ value) =>
     Trees.Assignment(identifier, value)
   }
+// f 10
 
-  def Substitutions: Parser[Trees.Substitutions] = Identifier ~ rep1(Expression) ^^ { case value ~ substitutions =>
-    Trees.Substitutions(value, substitutions)
+  def Substitution: Parser[Trees.Tree => Trees.Substitutions] = Expression ^^ {
+    case value => {
+      Trees.Substitutions(_, value)
+    }
+  }
+
+  def Substitutions: Parser[Trees.Expr] = Identifier ~ rep1(Substitution) ^^ {
+    case id ~ substitutions => {
+      (id.asInstanceOf[Trees.Expr] /: substitutions)((acc, f) => f(acc))
+    }
   }
 
   def BindingAssignment =
@@ -166,9 +178,8 @@ object Parser extends Parsers {
     }
 
   def Expression = Substitutions | OperatorExpr
-  def Definition = (BindingAssignment | Assignment)
-  def Statement = Definition | Expression
-  def Program = (Statement).* ^^ { case list =>
+  def Definition = (Assignment)
+  def Program = (Expression | Definition).* ^^ { case list =>
     Trees.Program(list)
   };
 

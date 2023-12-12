@@ -3,8 +3,13 @@ import ocaml.trees._
 
 import ocaml.types._
 
-case class EnviromentEntry(identifier: Trees.Identifier, _type: Types.Type) extends PrettyPrint {
+case class EnviromentEntry(identifier: Trees.Identifier, _type: Types.Type, tree: Trees.Tree) extends PrettyPrint {
   def prettyPrint: String = "val " + identifier.value + " : " + _type.prettyPrint
+
+  override def toString = {
+    "EnviromentEntry(" + identifier + "," + _type + ")"
+  }
+
 }
 
 case class Enviroment(entries: List[EnviromentEntry]) extends PrettyPrint {
@@ -12,16 +17,17 @@ case class Enviroment(entries: List[EnviromentEntry]) extends PrettyPrint {
     return entries.map(entry => entry.prettyPrint).mkString("\n")
   }
 
+  def replaceEntries(newEntries: List[EnviromentEntry], entries: List[EnviromentEntry]): List[EnviromentEntry] = {
+    val filtered = entries.filter(entry => !newEntries.contains(entry));
+    filtered ::: newEntries
+  }
+
   def copyWith(entry: EnviromentEntry): Enviroment = {
-    replace(entry.identifier, entry._type)
+    Enviroment(replaceEntries(List(entry), entries))
   }
 
   def copyWith(newEntries: List[EnviromentEntry]): Enviroment = {
-    newEntries match {
-      case head :: next =>
-      case head :: next => lookup(entry, next)
-      case Nil          => None
-    }
+    Enviroment(replaceEntries(newEntries, entries))
   }
 
   def lookup(entry: Trees.Identifier, entries: List[EnviromentEntry]): Option[EnviromentEntry] = {
@@ -40,8 +46,9 @@ case class Enviroment(entries: List[EnviromentEntry]) extends PrettyPrint {
     entry match {
       case id: Trees.Identifier => {
         lookup(id) match {
-          case Some(value) => Enviroment(entries.filter(v => v != value)).copyWith(EnviromentEntry(id, _type))
-          case None        => Enviroment(entries)
+          case Some(value) =>
+            Enviroment(entries.filter(v => v != value)).copyWith(EnviromentEntry(id, _type, entry))
+          case None => Enviroment(entries)
         }
       }
       case _ => Enviroment(entries)
