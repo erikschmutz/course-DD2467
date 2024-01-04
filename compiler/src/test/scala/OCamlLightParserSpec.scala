@@ -47,25 +47,29 @@ class OCamlLightParserSpec extends AnyFlatSpec with Matchers {
 
   "Lexer" should "exists" in {}
 
-  getFilesFromDir("examples/tokens").forEach((file) => {
+  getFilesFromDir("examples/valid").forEach((file) => {
     val fileName = file.toAbsolutePath.toString
     if (fileName.endsWith(".in")) {
       it should "be able to parse tokens from file Tokens." + file.getFileName in {
         val inFile = readFile(fileName);
-        val outFile = readFile(fileName.replace(".in", ".out"));
-        getTokens(inFile) shouldEqual (outFile)
+        val outFile = readFile(fileName.replace(".in", ".tokens"))
+          .replace(" ", "")
+          .replace("\n", "");;
+        getTokens(inFile)
+          .replace(" ", "")
+          .replace("\n", "") shouldEqual (outFile)
       }
     }
   })
 
   "Parser" should "exists" in {}
-  getFilesFromDir("examples/syntax").forEach((file) => {
+  getFilesFromDir("examples/valid").forEach((file) => {
     val fileName = file.toAbsolutePath.toString
     if (fileName.endsWith(".in")) {
-      it should "be able to parse syntax from file " + file.getFileName in {
+      it should "be able to parse syntax from file Syntax." + file.getFileName in {
         val inFile = readFile(fileName);
         // removes white space
-        val outFile = readFile(fileName.replace(".in", ".out"))
+        val outFile = readFile(fileName.replace(".in", ".syntax"))
           .replace(" ", "")
           .replace("\n", "");
 
@@ -73,30 +77,29 @@ class OCamlLightParserSpec extends AnyFlatSpec with Matchers {
           .replace(" ", "")
           .replace("\n", "");
 
-        print(output)
         output shouldEqual (outFile)
       }
     }
   })
 
-  "Analyzer" should "exists" in {}
+  // "Analyzer" should "exists" in {}
 
-  getFilesFromDir("examples/analyzer").forEach((file) => {
+  getFilesFromDir("examples/valid").forEach((file) => {
     val fileName = file.toAbsolutePath.toString
     if (fileName.endsWith(".in")) {
-      it should "be able to analyze syntax from file Analyzer." + file.getFileName in {
+      it should "be able to analyze syntax from file Types." + file.getFileName in {
         val inFile = readFile(fileName);
-        // // removes white space
-        // val outFile = readFile(fileName.replace(".in", ".out"))
-        //   .replace(" ", "")
-        //   .replace("\n", "");
+        // removes white space
+        val outFile = readFile(fileName.replace(".in", ".types"))
+          .replace(" ", "")
+          .replace("\n", "");
 
-        // val output = getAnalyzer(inFile)
-        //   .replace(" ", "")
-        //   .replace("\n", "");
-
-        print(getAnalyzerPretty(inFile))
-        // output shouldEqual (outFile)
+        val output = getAnalyzer(inFile)
+          .replace(" ", "")
+          .replace("\n", "");
+        println("output", output)
+        // print(getAnalyzerPretty(inFile))
+        output shouldEqual (outFile)
       }
     }
   })

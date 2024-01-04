@@ -26,6 +26,7 @@ object Trees {
     case class FloatLit(value: Float) extends Expr
     case class OpenParantheses() extends Tree
     case class CloseParantheses() extends Tree
+    case class Divider() extends Tree
 
     case class Plus() extends Operator
     case class Minus() extends Operator
@@ -45,7 +46,7 @@ object Trees {
   ) extends Expr
 
   case class LetBinding(
-      identifier: Trees.Tree,
+      identifier: Trees.Identifier,
       expression: Expr
   ) extends Expr
 

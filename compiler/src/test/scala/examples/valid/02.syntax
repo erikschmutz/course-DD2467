@@ -1,0 +1,15 @@
+Program(
+    List(
+        Assignment(
+            Identifier(f),
+            LetBinding(
+                Identifier(a),
+                Identifier(a)
+            )
+        ),
+        Substitutions(
+            Identifier(f),
+            IntLit(1)
+        )
+    )
+)

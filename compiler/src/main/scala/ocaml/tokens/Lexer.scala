@@ -12,6 +12,7 @@ object Lexer extends RegexParsers {
 
   // operators
   def EQUAL = "=".r ^^ { _ => Tokens.EQUAL() }
+  def DIVIDER = ";;".r ^^ { _ => Tokens.DIVIDER() }
   def PLUS = "\\+".r ^^ { _ => Tokens.PLUS() }
   def MINUS = "\\-".r ^^ { _ => Tokens.MINUS() }
   def MULTIPLY = "\\*".r ^^ { _ => Tokens.MULTIPLY() }
@@ -33,6 +34,7 @@ object Lexer extends RegexParsers {
 
   def ALL = positioned {
     OPEN_PARENTETHES |
+      DIVIDER |
       CLOSE_PARENTETHES |
       LET |
       EQUAL |

@@ -56,6 +56,11 @@ object Parser extends Parsers {
         "Close Parantheses",
         { case Tokens.CLOSE_PARENTETHES() => Trees.Tokens.CloseParantheses() }
       )
+    val Divider = accept(
+      "Divider",
+      { case Tokens.DIVIDER() => Trees.Tokens.Divider() }
+    )
+
     val IntLit =
       accept(
         "Int",
@@ -164,7 +169,7 @@ object Parser extends Parsers {
       (id.asInstanceOf[Trees.Expr] /: substitutions)((acc, f) => f(acc))
     }
   }
-  def BindingAssignment: Parser[Trees.Expr => Trees.LetBinding] = (Identifier | Expression) ^^ {
+  def BindingAssignment: Parser[Trees.Expr => Trees.LetBinding] = (Identifier) ^^ {
     case value => {
       Trees.LetBinding(value, _)
     }
@@ -184,7 +189,7 @@ object Parser extends Parsers {
 
   def Expression: Parser[Trees.Expr] = Substitutions | OperatorExpr
   def Definition = (BindingAssignments | Assignment)
-  def Program = (Expression | Definition).* ^^ { case list =>
+  def Program = (((Expression | Definition) <~ Terminals.Divider) | (Expression | Definition)).* ^^ { case list =>
     Trees.Program(list)
   };
 

@@ -1,0 +1,7 @@
+AnalyzerResult(
+    Integer(),
+    Enviroment(
+        List(
+            EnviromentEntry(
+                f,
+                Function(Integer(),Integer())))))

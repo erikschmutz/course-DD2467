@@ -1,13 +1,15 @@
 AnalyzerResult(
-    Integer(),
+          Function(
+                        Unknown('a),
+                        Unknown('a)
+                ),
     Enviroment(
         List(
                 EnviromentEntry(
                     Identifier(a),
                     Function(
-                        List(Unknown('a)
-                    ),
-                    Unknown('a)
+                        Unknown('a),
+                        Unknown('a)
                 )
             )
         )

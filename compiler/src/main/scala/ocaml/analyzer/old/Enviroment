@@ -1,10 +1,10 @@
 package ocaml.enviroment
+import ocaml.trees._
 
 import ocaml.types._
-import ocaml.trees.Trees
 
-case class EnviromentEntry(identifier: String, _type: Types.Type) extends PrettyPrint {
-  def prettyPrint: String = "val " + identifier + " : " + _type.prettyPrint
+case class EnviromentEntry(identifier: Trees.Identifier, _type: Types.Type, tree: Trees.Tree) extends PrettyPrint {
+  def prettyPrint: String = "val " + identifier.value + " : " + _type.prettyPrint
 
   override def toString = {
     "EnviromentEntry(" + identifier + "," + _type + ")"
@@ -30,7 +30,7 @@ case class Enviroment(entries: List[EnviromentEntry]) extends PrettyPrint {
     Enviroment(replaceEntries(newEntries, entries))
   }
 
-  def lookup(entry: String, entries: List[EnviromentEntry]): Option[EnviromentEntry] = {
+  def lookup(entry: Trees.Identifier, entries: List[EnviromentEntry]): Option[EnviromentEntry] = {
     entries match {
       case head :: next if head.identifier == entry => Some(head)
       case head :: next                             => lookup(entry, next)
@@ -38,27 +38,20 @@ case class Enviroment(entries: List[EnviromentEntry]) extends PrettyPrint {
     }
   }
 
-  def lookup(entry: String): Option[EnviromentEntry] = {
+  def lookup(entry: Trees.Identifier): Option[EnviromentEntry] = {
     lookup(entry, entries)
   }
 
-  def replace(entry: String, _type: Types.Type): Enviroment = {
+  def replace(entry: Trees.Tree, _type: Types.Type): Enviroment = {
     entry match {
-      case id: String => {
+      case id: Trees.Identifier => {
         lookup(id) match {
           case Some(value) =>
-            Enviroment(entries.filter(v => v != value)).copyWith(EnviromentEntry(id, _type))
+            Enviroment(entries.filter(v => v != value)).copyWith(EnviromentEntry(id, _type, entry))
           case None => Enviroment(entries)
         }
       }
       case _ => Enviroment(entries)
-    }
-  }
-
-  def withType(tree: Trees.Tree, _type: Types.Type) = {
-    tree match {
-      case Trees.Identifier(v, _) => replace(v, _type)
-      case _                      => this
     }
   }
 }

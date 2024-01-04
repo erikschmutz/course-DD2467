@@ -1,0 +1,11 @@
+AnalyzerResult(
+    Integer(),
+    Enviroment(
+        List(
+            EnviromentEntry(
+                f,
+                Function(Unknown('a),Unknown('a))
+            )
+        )
+    )
+)

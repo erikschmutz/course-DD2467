@@ -22,6 +22,7 @@ object Tokens {
 
   /* Operators */
   case class EQUAL() extends TokenKind
+  case class DIVIDER() extends TokenKind
   case class DIVIDE() extends TokenKind
   case class PLUS() extends TokenKind
   case class MINUS() extends TokenKind

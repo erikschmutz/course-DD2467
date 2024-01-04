@@ -20,6 +20,7 @@ object Analyzer {
   }
 
   def evaluate(tree: Trees.Tree, enviroment: Enviroment): T = {
+  
     tree match {
       case a: Trees.Tokens.IntLit => evaluate(a, enviroment)
       case a: Trees.Assignment    => evaluate(a, enviroment)
@@ -150,6 +151,7 @@ object Analyzer {
   }
 
   def evaluate(prog: Trees.Program): T = {
+    
     val result = evaluate(prog.statements, Enviroment(List()))
     // print(result)
     result

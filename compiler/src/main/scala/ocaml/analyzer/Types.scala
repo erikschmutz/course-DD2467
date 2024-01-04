@@ -17,12 +17,9 @@ object Types {
   case class Unit() extends Type {
     def prettyPrint: String = "()"
   }
-  case class Function(input: List[Type], output: Type) extends Type {
+  case class Function(input: Type, output: Type) extends Type {
     def prettyPrint: String = {
-      if (input.length < 2)
-        return input.map(arg => arg.prettyPrint).mkString(",") + "=>" + output.prettyPrint
-
-      "(" + input.map(arg => arg.prettyPrint).mkString(",") + ")" + "=>" + output.prettyPrint
+      input.prettyPrint + "=>" + output.prettyPrint
     }
 
   }
