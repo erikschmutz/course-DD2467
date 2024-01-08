@@ -1,0 +1,14 @@
+AnalyzerResult(
+    Integer(),
+    Enviroment(
+        List(
+                EnviromentEntry(
+                    Identifier(f),
+                    Function(
+                        Unknown('a),
+                        Unknown('a)
+                )
+            )
+        )
+    )
+)

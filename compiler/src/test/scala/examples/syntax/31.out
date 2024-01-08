@@ -1,0 +1,11 @@
+Program(
+    List(
+        Assignment(
+            Identifier(add),
+            LetBinding(
+                Identifier(a, unit),
+                IntLit(1)
+            )
+        )
+    )
+)

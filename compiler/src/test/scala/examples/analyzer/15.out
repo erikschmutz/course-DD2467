@@ -1,10 +1,16 @@
 AnalyzerResult(
+   Function(
     Integer(),
+    Integer()
+    ),
     Enviroment(
         List(
             EnviromentEntry(
                 Identifier(f),
-                    Function(List(Integer(),Integer()),Integer()))
+                Function(
+                    Integer(),
+                    Integer()
                 )
             )
-        )
+    ))
+)

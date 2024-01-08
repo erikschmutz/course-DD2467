@@ -1,0 +1,12 @@
+Program(
+    List(
+    Assignment(
+        Identifier(a),
+        OperatorExpr(
+            IntLit(1),
+            IntLit(2),
+            GreaterThan()
+        )
+    )
+)
+)

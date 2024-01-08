@@ -6,7 +6,10 @@ import scala.util.parsing.input.Positional
 
 object Tokens {
   abstract class TokenKind extends Positional
+  abstract class MetaToken extends TokenKind
   abstract class Token[T](value: T) extends TokenKind
+
+  case class COMMENT(value: String) extends MetaToken
 
   /* Literals */
   case class INT_LIT(value: Integer) extends Token(value)
@@ -19,6 +22,17 @@ object Tokens {
 
   /* Keywords */
   case class LET() extends TokenKind
+  case class IN() extends TokenKind
+  case class IF() extends TokenKind
+  case class THEN() extends TokenKind
+  case class ELSE() extends TokenKind
+  case class FUNCTION() extends TokenKind
+  case class ARROW() extends TokenKind
+  case class GT() extends TokenKind
+  case class LT() extends TokenKind
+  case class TRUE() extends TokenKind
+  case class FALSE() extends TokenKind
+  case class UNIT() extends TokenKind
 
   /* Operators */
   case class EQUAL() extends TokenKind

@@ -1,0 +1,3 @@
+let add = function a -> function b -> a * b;;
+(* These functions should be the same *)
+let add a b = a * b;;

@@ -1,0 +1,16 @@
+AnalyzerResult(
+    Function(
+        Integer(),Bool()
+    ),
+    Enviroment(
+        List(
+            EnviromentEntry(
+                Identifier(p),
+                Function(
+                    Integer(),
+                    Bool()
+                )
+            )
+        )
+    )
+)

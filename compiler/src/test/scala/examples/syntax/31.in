@@ -1,0 +1,2 @@
+(* Should be able to handle units *)
+let add = function () -> 1

@@ -7,7 +7,7 @@ case class EnviromentEntry(identifier: String, _type: Types.Type) extends Pretty
   def prettyPrint: String = "val " + identifier + " : " + _type.prettyPrint
 
   override def toString = {
-    "EnviromentEntry(" + identifier + "," + _type + ")"
+    "EnviromentEntry(Identifier(" + identifier + ")," + _type + ")"
   }
 
 }

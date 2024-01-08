@@ -1,0 +1,7 @@
+Program(
+    List(
+        Assignment(
+            Identifier(a),If(Bool(true),IntLit(1),IntLit(2))
+        )
+    )
+)

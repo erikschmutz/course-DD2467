@@ -2,11 +2,20 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import scala.collection.mutable.Stack
 import java.nio.file.{FileSystems, Files}
+import java.io.PrintWriter
+import java.io.File
+import java.io.FileOutputStream
 
 class OCamlLightParserSpec extends AnyFlatSpec with Matchers {
 
   def readFile(path: String): String = {
     scala.io.Source.fromFile(path).mkString
+  }
+
+  def writeToFile(path: String, value: String) = {
+    val printWriter = new PrintWriter(new FileOutputStream(new File(path)))
+    printWriter.write(value)
+    printWriter.close()
   }
 
   def getFilesFromDir(dir: String) = {
@@ -29,11 +38,11 @@ class OCamlLightParserSpec extends AnyFlatSpec with Matchers {
       .toString
   }
 
-  def getAnalyzer(value: String): String = {
+  def getAnalyzer(value: String) = {
     OCamlLightParser
       .analyze(value) match {
-      case None        => None.toString()
-      case Some(value) => value.toString()
+      case None        => None
+      case Some(value) => value
     }
   }
 
@@ -98,11 +107,19 @@ class OCamlLightParserSpec extends AnyFlatSpec with Matchers {
           .replace("\n", "");
 
         val output = getAnalyzer(inFile)
+
+        val outputStr = output
+          .toString()
           .replace(" ", "")
           .replace("\n", "");
-        println("output", output)
-        // print(getAnalyzerPretty(inFile))
-        output shouldEqual (outFile)
+
+        outputStr shouldEqual (outFile)
+        // if we succeed we write out the pretty file
+        val pretty = getAnalyzerPretty(inFile)
+        writeToFile(
+          fileName,
+          inFile.split("\\(\\*")(0) + "(*====================\n" + pretty + "\n====================*)"
+        )
       }
     }
   })

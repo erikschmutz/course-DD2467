@@ -1,0 +1,28 @@
+AnalyzerResult(
+    Integer(),
+    Enviroment(
+        List(
+            EnviromentEntry(
+                Identifier(add),
+                Function(
+                    Integer(),
+                    Integer()
+                )
+            ),
+            EnviromentEntry(
+                Identifier(minus),
+                Function(
+                    Integer(),
+                    Integer()
+                )
+            ),
+            EnviromentEntry(
+                Identifier(multi),
+                Function(
+                    Integer(),
+                    Integer()
+                )
+            )
+        )
+    )
+)

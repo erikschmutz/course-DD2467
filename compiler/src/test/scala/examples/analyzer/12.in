@@ -1,0 +1,11 @@
+let add a = a + 1;;
+let minus a = a - 3;;
+let multi a = a * 2;;
+multi (add(minus 1))
+
+(*====================
+val add : int=>int
+val minus : int=>int
+val multi : int=>int
+- :int
+====================*)

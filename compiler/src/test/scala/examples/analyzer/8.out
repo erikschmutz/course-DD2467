@@ -1,4 +1,11 @@
 AnalyzerResult(
-    Integer(),
+    Char(),
     Enviroment(
-        List(EnviromentEntry(Identifier(f),Function(List(Integer(),Integer()),Integer())))))
+        List(
+            EnviromentEntry(
+                Identifier(f),
+                Function(Unknown('a),Char())
+            )
+        )
+    )
+)

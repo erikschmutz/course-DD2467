@@ -8,7 +8,18 @@ object Lexer extends RegexParsers {
   }
 
   // Key words
-  def LET = "let".r ^^ { _ => Tokens.LET() }
+  def LET = "let ".r ^^ { _ => Tokens.LET() }
+  def IF = "if ".r ^^ { _ => Tokens.IF() }
+  def THEN = "then ".r ^^ { _ => Tokens.THEN() }
+  def TRUE = "true ".r ^^ { _ => Tokens.TRUE() }
+  def FALSE = "true ".r ^^ { _ => Tokens.FALSE() }
+  def ELSE = "else ".r ^^ { _ => Tokens.ELSE() }
+  def LT = "<".r ^^ { _ => Tokens.LT() }
+  def GT = ">".r ^^ { _ => Tokens.GT() }
+  def IN = "in ".r ^^ { _ => Tokens.IN() }
+  def FUNCTION = "function".r ^^ { _ => Tokens.FUNCTION() }
+  def ARROW = "->".r ^^ { _ => Tokens.ARROW() }
+  def COMMENT = "\\(\\*(.|\\n)*\\*\\)".r ^^ { a => Tokens.COMMENT(a) }
 
   // operators
   def EQUAL = "=".r ^^ { _ => Tokens.EQUAL() }
@@ -22,7 +33,7 @@ object Lexer extends RegexParsers {
   def OPEN_PARENTETHES = "\\(".r ^^ { _ => Tokens.OPEN_PARENTETHES() }
   def CLOSE_PARENTETHES = "\\)".r ^^ { _ => Tokens.CLOSE_PARENTETHES() }
   def COLON = ":".r ^^ { _ => Tokens.COLON() }
-  def SEMICOLON = ";;".r ^^ { _ => Tokens.SEMICOLON() }
+  def UNIT = "\\(\\)".r ^^ { _ => Tokens.UNIT() }
 
   // literals and identifiers
   def INT_LIT = """\d+(\.\d*)?""".r ^^ { a => Tokens.INT_LIT(a.toInt) }
@@ -34,10 +45,22 @@ object Lexer extends RegexParsers {
   def IDENTIFIER = "[a-z]+".r ^^ { a => Tokens.IDENTIFIER(a) }
 
   def ALL = positioned {
-    OPEN_PARENTETHES |
+    UNIT |
+      COMMENT |
+      TRUE |
+      FALSE |
+      OPEN_PARENTETHES |
       DIVIDER |
       CLOSE_PARENTETHES |
       LET |
+      LT |
+      GT |
+      IF |
+      THEN |
+      ELSE |
+      IN |
+      ARROW |
+      FUNCTION |
       EQUAL |
       FLOAT_PLUS |
       PLUS |
@@ -53,6 +76,9 @@ object Lexer extends RegexParsers {
   }
 
   def evaluate(text: String) = {
-    parseAll(rep(ALL), text)
+    parseAll(rep(ALL), text) match {
+      case Success(result, next) => Some(result.filter(!_.isInstanceOf[Tokens.COMMENT]))
+      case _                     => None
+    }
   }
 }

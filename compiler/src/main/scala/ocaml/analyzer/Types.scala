@@ -14,11 +14,17 @@ object Types {
   case class Integer() extends Type {
     def prettyPrint: String = "int"
   }
+  case class Char() extends Type {
+    def prettyPrint: String = "char"
+  }
   case class Float() extends Type {
     def prettyPrint: String = "float"
   }
   case class Unit() extends Type {
     def prettyPrint: String = "()"
+  }
+  case class Bool() extends Type {
+    def prettyPrint: String = "bool"
   }
   case class Function(input: Type, output: Type) extends Type {
     def prettyPrint: String = {

@@ -23,8 +23,14 @@ object Trees {
   object Tokens {
     case class IntLit(value: Integer) extends Expr
     case class StringLit(value: String) extends Expr
+    case class CharLit(value: String) extends Expr
     case class FloatLit(value: Float) extends Expr
+    case class Bool(value: Boolean) extends Expr
+    case class Unit() extends Expr
+
     case class OpenParantheses() extends Tree
+    case class LeftArrow() extends Tree
+    case class Function() extends Tree
     case class CloseParantheses() extends Tree
     case class Divider() extends Tree
 
@@ -40,8 +46,14 @@ object Trees {
     case class Colon() extends Operator
     case class Equal() extends Operator
 
-    case class Let() extends Keyword
+    case class LessThan() extends Operator
+    case class GreaterThan() extends Operator
 
+    case class Let() extends Keyword
+    case class In() extends Keyword
+    case class If() extends Keyword
+    case class Then() extends Keyword
+    case class Else() extends Keyword
   }
 
   case class OperatorExpr(
@@ -53,6 +65,18 @@ object Trees {
   case class LetBinding(
       identifier: Trees.Identifier,
       expression: Expr
+  ) extends Expr
+
+  case class LetBindingExpr(
+      identifier: Trees.Identifier,
+      value: Expr,
+      expr: Expr
+  ) extends Expr
+
+  case class If(
+      expr: Expr,
+      thn: Expr,
+      els: Expr
   ) extends Expr
 
   case class Substitutions(

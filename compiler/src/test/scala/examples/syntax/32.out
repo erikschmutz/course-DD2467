@@ -1,0 +1,13 @@
+Program(
+    List(
+        LetBindingExpr(
+            Identifier(a),
+            IntLit(1),
+            OperatorExpr(
+                Identifier(a),
+                IntLit(1),
+                Plus()
+            )
+        )
+    )
+)

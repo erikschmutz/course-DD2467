@@ -1,0 +1,9 @@
+let g a = a + 1;;
+let f a = g a;;
+f 1
+
+(*====================
+val g : int=>int
+val f : int=>int
+- :int
+====================*)
