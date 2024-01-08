@@ -28,6 +28,11 @@ object Trees {
     case class CloseParantheses() extends Tree
     case class Divider() extends Tree
 
+    case class FloatPlus() extends Operator
+    case class FloatMinus() extends Operator
+    case class FloatDivide() extends Operator
+    case class FloatMultiply() extends Operator
+
     case class Plus() extends Operator
     case class Minus() extends Operator
     case class Multiply() extends Operator

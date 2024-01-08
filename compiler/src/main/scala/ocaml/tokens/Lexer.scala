@@ -14,6 +14,7 @@ object Lexer extends RegexParsers {
   def EQUAL = "=".r ^^ { _ => Tokens.EQUAL() }
   def DIVIDER = ";;".r ^^ { _ => Tokens.DIVIDER() }
   def PLUS = "\\+".r ^^ { _ => Tokens.PLUS() }
+  def FLOAT_PLUS = "\\+\\.".r ^^ { _ => Tokens.FLOAT_PLUS() }
   def MINUS = "\\-".r ^^ { _ => Tokens.MINUS() }
   def MULTIPLY = "\\*".r ^^ { _ => Tokens.MULTIPLY() }
   def DIVIDE = "\\/".r ^^ { _ => Tokens.DIVIDE() }
@@ -38,6 +39,7 @@ object Lexer extends RegexParsers {
       CLOSE_PARENTETHES |
       LET |
       EQUAL |
+      FLOAT_PLUS |
       PLUS |
       MINUS |
       COLON |

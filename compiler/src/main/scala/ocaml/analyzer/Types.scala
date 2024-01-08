@@ -14,6 +14,9 @@ object Types {
   case class Integer() extends Type {
     def prettyPrint: String = "int"
   }
+  case class Float() extends Type {
+    def prettyPrint: String = "float"
+  }
   case class Unit() extends Type {
     def prettyPrint: String = "()"
   }

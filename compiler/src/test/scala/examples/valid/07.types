@@ -1,3 +1,0 @@
-AnalyzerResult(
-    Integer(),
-    Enviroment(List(EnviromentEntry(f,Function(Integer(),Function(Unknown('b),Integer()))))))

@@ -21,8 +21,9 @@ object Analyzer {
 
   def lookupType(identifier: Trees.Identifier) = {
     identifier.varibleType match {
-      case Some(v) if v == "int" => Types.Integer()
-      case _                     => Types.Unknown("'" + identifier.value)
+      case Some(v) if v == "int"   => Types.Integer()
+      case Some(v) if v == "float" => Types.Float()
+      case _                       => Types.Unknown("'" + identifier.value)
     }
   }
 
@@ -44,13 +45,14 @@ object Analyzer {
 
   def evaluate(tree: Trees.Tree, enviroment: Enviroment): T = {
     tree match {
-      case a: Trees.Tokens.IntLit => evaluate(a, enviroment)
-      case a: Trees.Substitutions => evaluate(a, enviroment)
-      case a: Trees.LetBinding    => evaluate(a, enviroment)
-      case a: Trees.OperatorExpr  => evaluate(a, enviroment)
-      case a: Trees.Identifier    => evaluate(a, enviroment)
-      case a: Trees.Assignment    => evaluate(a, enviroment)
-      case _                      => None
+      case a: Trees.Tokens.IntLit   => evaluate(a, enviroment)
+      case a: Trees.Tokens.FloatLit => evaluate(a, enviroment)
+      case a: Trees.Substitutions   => evaluate(a, enviroment)
+      case a: Trees.LetBinding      => evaluate(a, enviroment)
+      case a: Trees.OperatorExpr    => evaluate(a, enviroment)
+      case a: Trees.Identifier      => evaluate(a, enviroment)
+      case a: Trees.Assignment      => evaluate(a, enviroment)
+      case _                        => None
     }
   }
 
@@ -72,6 +74,18 @@ object Analyzer {
         )
       case (
             Some(AnalyzerResult(l, _)),
+            op: Trees.Tokens.FloatPlus,
+            Some(AnalyzerResult(r, _))
+          ) if canBeType[Types.Float](l) && canBeType[Types.Float](r) =>
+        Some(
+          AnalyzerResult(
+            Types.Float(),
+            enviroment.withType(tree.left, Types.Float()).withType(tree.right, Types.Float())
+          )
+        )
+
+      case (
+            Some(AnalyzerResult(l, _)),
             op: Trees.Tokens.Multiply,
             Some(AnalyzerResult(r, _))
           ) if canBeType[Types.Integer](l) && canBeType[Types.Integer](r) =>
@@ -88,6 +102,12 @@ object Analyzer {
   def evaluate(tree: Trees.Tokens.IntLit, enviroment: Enviroment): T = {
     Some(
       AnalyzerResult(Types.Integer(), enviroment)
+    )
+  }
+
+  def evaluate(tree: Trees.Tokens.FloatLit, enviroment: Enviroment): T = {
+    Some(
+      AnalyzerResult(Types.Float(), enviroment)
     )
   }
 

@@ -28,6 +28,11 @@ object Tokens {
   case class MINUS() extends TokenKind
   case class MULTIPLY() extends TokenKind
 
+  case class FLOAT_PLUS() extends TokenKind
+  case class FLOAT_MINUS() extends TokenKind
+  case class FLOAT_DIVIDE() extends TokenKind
+  case class FLOAT_MULTIPLY() extends TokenKind
+
   case class OPEN_PARENTETHES() extends TokenKind
   case class CLOSE_PARENTETHES() extends TokenKind
   case class COLON() extends TokenKind

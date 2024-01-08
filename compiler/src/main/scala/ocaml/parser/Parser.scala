@@ -86,6 +86,12 @@ object Parser extends Parsers {
       "Plus",
       { case Tokens.DIVIDE() => Trees.Tokens.Divide() }
     )
+
+    val FloatPlus = accept(
+      "DivideFloat",
+      { case Tokens.FLOAT_PLUS() => Trees.Tokens.FloatPlus() }
+    )
+
     val Minus = accept(
       "Minus",
       { case Tokens.MINUS() => Trees.Tokens.Minus() }
@@ -123,12 +129,16 @@ object Parser extends Parsers {
       Trees.Identifier(name.value, Option(_type.value))
     }
 
-  def OperatorExpr: Parser[Trees.Expr] = Term ~ rep(AddExpr | MinusExpr) ^^ { case a ~ b =>
+  def OperatorExpr: Parser[Trees.Expr] = Term ~ rep(AddExpr | MinusExpr | FloatAddExpr) ^^ { case a ~ b =>
     (a /: b)((acc, f) => f(acc))
   }
 
   def AddExpr = (Terminals.Plus ~> Term) ^^ { case a =>
     Trees.OperatorExpr(_, a, Trees.Tokens.Plus())
+  }
+
+  def FloatAddExpr = (Terminals.FloatPlus ~> Term) ^^ { case a =>
+    Trees.OperatorExpr(_, a, Trees.Tokens.FloatPlus())
   }
 
   def MinusExpr = (Terminals.Plus ~> Term) ^^ { case a =>
@@ -150,7 +160,7 @@ object Parser extends Parsers {
   def Factor = Primitive | (Terminals.OpenParantheses ~> (OperatorExpr) <~ Terminals.CloseParantheses)
 
   def Identifier = TypedIdentifier | Terminals.Identifier
-  def Operator = Terminals.Plus | Terminals.Minus | Terminals.Multiply | Terminals.Divide
+  def Operator = Terminals.Plus | Terminals.Minus | Terminals.Multiply | Terminals.Divide | Terminals.FloatPlus
   def Primitive = Terminals.IntLit | Terminals.FloatLit | Terminals.StringLit | Terminals.Identifier;
 
   def Assignment = Terminals.Let ~ Identifier ~ Terminals.Equal ~ Expression ^^ { case (_ ~ identifier ~ _ ~ value) =>
