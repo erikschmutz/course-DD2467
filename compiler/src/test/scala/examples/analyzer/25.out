@@ -1,0 +1,16 @@
+AnalyzerResult(
+    Function(
+        Integer(),Bool()
+    ),
+    Enviroment(
+        List(
+            EnviromentEntry(
+                Identifier(fac),
+                Function(
+                    Integer(),
+                    Bool()
+                )
+            )
+        )
+    )
+)

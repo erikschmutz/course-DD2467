@@ -1,0 +1,18 @@
+Program(
+    List(
+        Assignment(
+            Identifier(fac),
+            LetBinding(
+                Identifier(x),
+                OperatorExpr(
+                    Identifier(x),
+                    Substitutions(
+                        Identifier(fac),
+                        OperatorExpr(
+                            Identifier(x),
+                            IntLit(1),Minus())),Multiply()
+                        )
+                    )
+                )
+            )
+        )

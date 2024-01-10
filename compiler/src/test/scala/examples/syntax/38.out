@@ -1,0 +1,16 @@
+Program(
+    List(
+        OperatorExpr(
+            IntLit(1),
+            Substitutions(
+                Identifier(fac),
+                OperatorExpr(
+                    Identifier(x),
+                    IntLit(1),
+                    Minus()
+                )
+            ),
+            Plus()
+        )
+    )
+)

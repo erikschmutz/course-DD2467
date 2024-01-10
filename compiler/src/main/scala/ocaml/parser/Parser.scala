@@ -16,9 +16,6 @@
   TypedIdentifier   ::= Identifier Colon Identifier
   Identifier        ::= _Identifier | TypedIdentifier
 
-
-
-
  */
 import scala.util.parsing.combinator.{RegexParsers, Parsers}
 import ocaml.tokens._
@@ -66,7 +63,7 @@ object Parser extends Parsers {
     val LessThan =
       accept(
         "LessThan",
-        { case Tokens.GT() => Trees.Tokens.LessThan() }
+        { case Tokens.LT() => Trees.Tokens.LessThan() }
       )
 
     val Divider = accept(
@@ -123,6 +120,11 @@ object Parser extends Parsers {
     val Unit = accept(
       "Unit",
       { case Tokens.UNIT() => Trees.Tokens.Unit() }
+    )
+
+    val Rec = accept(
+      "Rec",
+      { case Tokens.REC() => Trees.Tokens.Rec() }
     )
 
     val Minus = accept(
@@ -220,29 +222,24 @@ object Parser extends Parsers {
     Trees.OperatorExpr(_, a, Trees.Tokens.Divide())
   }
 
-  def Factor = Primitive | (Terminals.OpenParantheses ~> (OperatorExpr) <~ Terminals.CloseParantheses)
+  def Factor =
+    ParenthesisedSubstitution | Substitutions | Primitive | (Terminals.OpenParantheses ~> (OperatorExpr) <~ Terminals.CloseParantheses)
 
   def Identifier = TypedIdentifier | Terminals.Identifier
   def Operator = Terminals.Plus | Terminals.Minus | Terminals.Multiply | Terminals.Divide | Terminals.FloatPlus
   def Primitive =
     Terminals.IntLit | Terminals.False | Terminals.True | Terminals.FloatLit | Terminals.Unit | Terminals.StringLit | Terminals.Identifier | Terminals.CharLit;
 
+  // var a = 1+2
   def Assignment = Terminals.Let ~ Identifier ~ Terminals.Equal ~ Expression ^^ { case (_ ~ identifier ~ _ ~ value) =>
     Trees.Assignment(identifier, value)
   }
 // f 10
 
   def Substitution: Parser[Trees.Expr => Trees.Substitutions] =
-    (Identifier | Expression) ^^ {
+    (Expression | Identifier) ^^ {
       case value => {
         Trees.Substitutions(_, value)
-      }
-    }
-
-  def ParenthesisedSubstitution: Parser[Trees.Expr => Trees.Substitutions] =
-    (Terminals.OpenParantheses ~> Expression <~ Terminals.CloseParantheses) ^^ {
-      case value => {
-        Trees.Substitutions(value, _)
       }
     }
 
@@ -251,6 +248,17 @@ object Parser extends Parsers {
       (substitutions.foldLeft(id.asInstanceOf[Trees.Expr]))((acc, f) => f(acc))
     }
   }
+
+  def ParenthesisedSubstitution: Parser[Trees.Expr] =
+    log(
+      Identifier ~ Terminals.OpenParantheses ~ rep1(
+        Substitution
+      ) ~ Terminals.CloseParantheses ^^ {
+        case id ~ _ ~ substitutions ~ _ => {
+          (substitutions.foldLeft(id.asInstanceOf[Trees.Expr]))((acc, f) => f(acc))
+        }
+      }
+    )("ParenthesisedSubstitution")
 
   def BindingAssignment: Parser[Trees.Expr => Trees.LetBinding] = (Identifier) ^^ {
     case value => {
@@ -280,6 +288,22 @@ object Parser extends Parsers {
       )
     }
 
+  def BindingRecAssignments =
+    Terminals.Let ~ Terminals.Rec ~ Identifier ~ repNM(
+      1,
+      Integer.MAX_VALUE,
+      BindingAssignment
+    ) ~ Terminals.Equal ~ Expression ^^ { case (_ ~ _ ~ identifier ~ lets ~ _ ~ value) =>
+      Trees.Assignment(
+        identifier,
+        Trees.LetBindingExpr(
+          identifier,
+          Trees.Recursive(),
+          (lets.foldRight(value))((f, acc) => f(acc))
+        )
+      )
+    }
+
   def LetBindingExpr =
     Assignment ~ Terminals.In ~ Expression ^^ { case (ass ~ _ ~ expr) =>
       Trees.LetBindingExpr(
@@ -289,20 +313,24 @@ object Parser extends Parsers {
       )
     }
 
-  def IfExpr = log(Terminals.If ~ Expression ~ Terminals.Then ~ Expression ~ Terminals.Else ~ Expression ^^ {
+  def IfExpr = Terminals.If ~ Expression ~ Terminals.Then ~ Expression ~ Terminals.Else ~ Expression ^^ {
     case _ ~ expr ~ _ ~ thn ~ _ ~ els => Trees.If(expr, thn, els)
-  })("IFExpr");
-
-  def FormulaExpr = SimpleExpression ~ (Terminals.GreaterThan | Terminals.LessThan) ~ SimpleExpression ^^ {
-    case left ~ operator ~ right => Trees.OperatorExpr(left, right, operator)
   }
 
-  def SimpleExpression = Substitutions | OperatorExpr | ParentensisExpression
+  def FormulaExpr: Parser[Trees.OperatorExpr] =
+    SimpleExpression ~ (Terminals.GreaterThan | Terminals.LessThan) ~ SimpleExpression ^^ {
+      case left ~ operator ~ right => Trees.OperatorExpr(left, right, operator)
+    }
+
+  def SimpleExpression: Parser[Trees.Expr] =
+    OperatorExpr | ParentensisExpression | Primitive | Identifier
 
   def ParentensisExpression: Parser[Trees.Expr] = Terminals.OpenParantheses ~> Expression <~ Terminals.CloseParantheses
   def Expression: Parser[Trees.Expr] =
-    IfExpr | FormulaExpr | LetBindingExpr | FunctionExpression | Substitutions | OperatorExpr | ParentensisExpression
-  def Definition = (BindingAssignments | Assignment)
+    ParenthesisedSubstitution | Substitutions | IfExpr | FormulaExpr | LetBindingExpr | FunctionExpression | SimpleExpression;
+
+  def Definition = (BindingAssignments | BindingRecAssignments | Assignment)
+  // Identifier
   def Program = (((Expression | Definition) <~ Terminals.Divider) | (Expression | Definition)).* ^^ { case list =>
     Trees.Program(list)
   };

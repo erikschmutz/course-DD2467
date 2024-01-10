@@ -1,38 +1,5 @@
 Program(
     List(
-        Assignment(
-            Identifier(add),
-            LetBinding(
-                Identifier(a),
-                OperatorExpr(
-                    Identifier(a),
-                    IntLit(1),
-                    Plus()
-                )
-            )
-        ),
-        Assignment(
-            Identifier(minus),
-            LetBinding(
-                Identifier(a),
-                OperatorExpr(
-                    Identifier(a),
-                    IntLit(3),
-                    Minus()
-                )
-            )
-        ),
-        Assignment(
-            Identifier(multi),
-            LetBinding(
-                Identifier(a),
-                OperatorExpr(
-                    Identifier(a),
-                    IntLit(2),
-                    Multiply()
-                )
-            )
-        ),
         Substitutions(
             Identifier(multi),
             Substitutions(

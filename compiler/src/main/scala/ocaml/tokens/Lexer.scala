@@ -11,8 +11,9 @@ object Lexer extends RegexParsers {
   def LET = "let ".r ^^ { _ => Tokens.LET() }
   def IF = "if ".r ^^ { _ => Tokens.IF() }
   def THEN = "then ".r ^^ { _ => Tokens.THEN() }
+  def REC = "rec ".r ^^ { _ => Tokens.REC() }
   def TRUE = "true ".r ^^ { _ => Tokens.TRUE() }
-  def FALSE = "true ".r ^^ { _ => Tokens.FALSE() }
+  def FALSE = "false ".r ^^ { _ => Tokens.FALSE() }
   def ELSE = "else ".r ^^ { _ => Tokens.ELSE() }
   def LT = "<".r ^^ { _ => Tokens.LT() }
   def GT = ">".r ^^ { _ => Tokens.GT() }
@@ -47,6 +48,7 @@ object Lexer extends RegexParsers {
   def ALL = positioned {
     UNIT |
       COMMENT |
+      REC |
       TRUE |
       FALSE |
       OPEN_PARENTETHES |

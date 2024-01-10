@@ -54,6 +54,7 @@ object Trees {
     case class If() extends Keyword
     case class Then() extends Keyword
     case class Else() extends Keyword
+    case class Rec() extends Keyword
   }
 
   case class OperatorExpr(
@@ -65,6 +66,9 @@ object Trees {
   case class LetBinding(
       identifier: Trees.Identifier,
       expression: Expr
+  ) extends Expr
+
+  case class Recursive(
   ) extends Expr
 
   case class LetBindingExpr(

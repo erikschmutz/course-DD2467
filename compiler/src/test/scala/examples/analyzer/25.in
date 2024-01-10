@@ -1,0 +1,6 @@
+let rec fac x = if x < 2 then false else fac (x - 1)
+
+(*====================
+val fac : int=>bool
+- :int=>bool
+====================*)

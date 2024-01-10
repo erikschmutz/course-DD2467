@@ -22,6 +22,7 @@ object Tokens {
 
   /* Keywords */
   case class LET() extends TokenKind
+  case class REC() extends TokenKind
   case class IN() extends TokenKind
   case class IF() extends TokenKind
   case class THEN() extends TokenKind

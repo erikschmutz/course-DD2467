@@ -1,0 +1,6 @@
+let fac x = if x < 2 then 1 else 3
+
+(*====================
+val fac : int=>int
+- :int=>int
+====================*)

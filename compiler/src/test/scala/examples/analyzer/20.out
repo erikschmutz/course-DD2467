@@ -1,0 +1,17 @@
+AnalyzerResult(
+    Function(
+        Unknown('x),
+        Unknown(b)
+    ),
+    Enviroment(
+        List(
+            EnviromentEntry(
+                Identifier(fac),
+                Function(
+                    Unknown('x),
+                    Unknown(b)
+                )
+            )
+        )
+    )
+)

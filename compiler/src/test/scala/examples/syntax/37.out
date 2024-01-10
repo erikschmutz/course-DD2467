@@ -1,0 +1,12 @@
+Program(
+    List(
+        Substitutions(
+            Identifier(p),
+            OperatorExpr(
+                Identifier(x),
+                IntLit(2),
+                Plus()
+            )
+        )
+    )
+)
