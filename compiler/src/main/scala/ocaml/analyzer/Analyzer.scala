@@ -19,6 +19,14 @@ object Analyzer {
     value.isInstanceOf[Q] || value.isInstanceOf[Types.Unknown]
   }
 
+  def lookupTypeStr(value: String) = {
+    value match {
+      case "int"   => Types.Integer()
+      case "float" => Types.Float()
+      case _       => Types.Unknown("'" + value)
+    }
+  }
+
   def lookupType(identifier: Trees.Identifier) = {
     identifier.varibleType match {
       case Some(v) if v == "int"   => Types.Integer()
@@ -33,7 +41,7 @@ object Analyzer {
     evaluate(
       tree.expression,
       enviroment.copyWith(
-        EnviromentEntry(tree.identifier.value, lookupType(tree.identifier))
+        ValEntry(tree.identifier.value, lookupType(tree.identifier))
       )
     ) match {
       case Some(value) => {
@@ -54,7 +62,7 @@ object Analyzer {
         evaluate(
           tree.expr,
           value.enviroment.copyWith(
-            EnviromentEntry(tree.identifier.value, value._type)
+            ValEntry(tree.identifier.value, value._type)
           )
         ) match {
           case Some(value) => {
@@ -86,7 +94,9 @@ object Analyzer {
       case a: Trees.LetBindingExpr  => evaluate(a, enviroment)
       case a: Trees.OperatorExpr    => evaluate(a, enviroment)
       case a: Trees.Identifier      => evaluate(a, enviroment)
+      case a: Trees.Record      => evaluate(a, enviroment)
       case a: Trees.Assignment      => evaluate(a, enviroment)
+      case a: Trees.TypeDeclaration => evaluate(a, enviroment)
       case _                        => None
     }
   }
@@ -201,6 +211,53 @@ object Analyzer {
     }
   }
 
+  def evaluate(tree: Trees.TypeDeclaration, enviroment: Enviroment): T = {
+    def getType(_type: Trees.TypeExp, name: Option[String]): Option[Types.Type] = {
+      _type match {
+        case value: Trees.TypeTuple =>
+          Some(
+            Types.Tuple(
+              value.value.map((v) => getType(v, None).get),
+              List()
+            )
+          )
+        case value: Trees.TypeFieldDeclarations =>
+          Some(
+            Types.Record(
+              name.getOrElse(""),
+              value.definitions.map(v=>Types.RecordField(v.key, getType(v._type, None).get)),
+              List()
+            )
+          )
+        case Trees.TypePrimitive(key) if key == "float" => Some(Types.Float())
+        case Trees.TypePrimitive(key) if key == "int" => Some(Types.Integer())
+        case _                                          => None
+      }
+    }
+
+    tree.information match {
+      case Trees.TypeEquation(_type) =>
+        Some(
+          AnalyzerResult(
+            Types.Unit(),
+            enviroment.addType(
+              TypeEntry(tree.identifier, getType(tree.information, Some(tree.identifier)).get)
+            )
+          )
+        )
+      case _type: Trees.TypeFieldDeclarations =>
+        Some(
+          AnalyzerResult(
+            Types.Unit(),
+            enviroment.addType(
+              TypeEntry(tree.identifier, getType(_type, Some(tree.identifier)).get)
+            )
+          )
+        )
+        
+    }
+  }
+
   def evaluate(tree: Trees.Tokens.IntLit, enviroment: Enviroment): T = {
     Some(
       AnalyzerResult(Types.Integer(), enviroment)
@@ -211,6 +268,42 @@ object Analyzer {
     Some(
       AnalyzerResult(Types.Char(), enviroment)
     )
+  }
+
+  def findType(tree: Trees.Record, enviroment: Enviroment): Option[TypeEntry] = {
+    val types = enviroment.entries.filter(v=>v.isInstanceOf[TypeEntry]).asInstanceOf[List[TypeEntry]]
+    println("Types")
+    println(types)
+    println("===")
+    types.reverse.map(_type =>{
+      _type._type match {
+        case Types.Record(_, fields, generics) if fields.length == tree.entries.length => {
+          if (fields.forall((b)=>{
+            val entry = tree.entries.find(v=>v.key == b.key);
+            println("key")
+            println(_type.identifier)
+            entry match {
+              case Some(v)=> {
+                evaluate(v.value, enviroment).get._type == b._type
+              }
+              case None => false
+            } 
+          }))
+          return Some(_type)
+        }
+      }
+    })
+  
+
+    None
+  }
+  
+  def evaluate(tree: Trees.Record, enviroment: Enviroment): T = {
+    println(tree)
+    findType(tree, enviroment) match {
+      case Some(value) => Some(AnalyzerResult(value._type, enviroment))
+      case None => None
+    }
   }
 
   def evaluate(tree: Trees.Tokens.Bool, enviroment: Enviroment): T = {
@@ -244,7 +337,7 @@ object Analyzer {
             Some(
               AnalyzerResult(
                 out._type,
-                enviroment.copyWith(EnviromentEntry(tree.variable.value, out._type))
+                enviroment.copyWith(ValEntry(tree.variable.value, out._type))
               )
             )
           }
@@ -355,7 +448,6 @@ object Analyzer {
           }
 
           case Some(arg) => {
-            println("failed2", arg)
             return None
           }
           case _ => {

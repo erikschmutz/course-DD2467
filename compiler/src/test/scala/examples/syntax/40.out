@@ -1,0 +1,20 @@
+Program(
+    List(
+        TypeDeclaration(
+            point,
+            TypeFieldDeclarations(
+                List(
+                    TypeFieldDeclaration(
+                        x,
+                        TypePrimitive(int)
+                    ),
+                    TypeFieldDeclaration(
+                        y,
+                        TypePrimitive(int)
+                    )
+                )
+            ),
+            List()
+        )
+    )
+)

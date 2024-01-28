@@ -1,0 +1,23 @@
+type a = {
+    x: int
+};;
+
+type b = {
+    y: int
+};;
+
+let a = {
+    x=1
+};;
+
+let b = {
+    y=1
+};;
+
+(*====================
+type a : a {x:int}
+type b : b {y:int}
+val a : a {x:int}
+val b : b {y:int}
+- :b {y:int}
+====================*)

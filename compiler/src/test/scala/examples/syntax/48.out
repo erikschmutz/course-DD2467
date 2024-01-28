@@ -1,0 +1,1 @@
+Program(List(Assignment(Identifier(a),Record(List(RecordEntry(x,FloatLit(1.0)),RecordEntry(y,FloatLit(2.0)))))))

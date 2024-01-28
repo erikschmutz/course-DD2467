@@ -1,0 +1,36 @@
+Program(
+    List(
+        TypeDeclaration(
+            color,
+            TypeConstraints(
+                List(
+                    TypeConstraint(
+                        BLUE,
+                        None
+                    ),
+                    TypeConstraint(
+                        RED,
+                        None
+                    ),
+                    TypeConstraint(
+                        YELLOW,
+                        None
+                    ),
+                    TypeConstraint(
+                        RGB,
+                        Some(
+                            TypeTuple(
+                                List(
+                                    TypePrimitive(int),
+                                    TypePrimitive(int),
+                                    TypePrimitive(int)
+                                )
+                            )
+                        )
+                    )
+                )
+            ),
+            List()
+        )
+    )
+)

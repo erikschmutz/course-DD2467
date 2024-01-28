@@ -18,15 +18,19 @@ object Tokens {
   case class STR_LIT(value: String) extends Token(value)
 
   /* Identifiers */
+  case class CONSTR_IDENTIFIER(value: String) extends Token(value)
   case class IDENTIFIER(value: String) extends Token(value)
+  case class TYPE_PARAM(value: String) extends Token(value)
 
   /* Keywords */
   case class LET() extends TokenKind
   case class REC() extends TokenKind
   case class IN() extends TokenKind
+  case class TYPE() extends TokenKind
   case class IF() extends TokenKind
   case class THEN() extends TokenKind
   case class ELSE() extends TokenKind
+  case class OF() extends TokenKind
   case class FUNCTION() extends TokenKind
   case class ARROW() extends TokenKind
   case class GT() extends TokenKind
@@ -34,6 +38,7 @@ object Tokens {
   case class TRUE() extends TokenKind
   case class FALSE() extends TokenKind
   case class UNIT() extends TokenKind
+  case class LINE() extends TokenKind
 
   /* Operators */
   case class EQUAL() extends TokenKind
@@ -42,6 +47,7 @@ object Tokens {
   case class PLUS() extends TokenKind
   case class MINUS() extends TokenKind
   case class MULTIPLY() extends TokenKind
+  case class COMMA() extends TokenKind
 
   case class FLOAT_PLUS() extends TokenKind
   case class FLOAT_MINUS() extends TokenKind
@@ -50,6 +56,9 @@ object Tokens {
 
   case class OPEN_PARENTETHES() extends TokenKind
   case class CLOSE_PARENTETHES() extends TokenKind
+  case class OPEN_CURLY() extends TokenKind
+  case class CLOSE_CURLY() extends TokenKind
+
   case class COLON() extends TokenKind
   case class SEMICOLON() extends TokenKind
 }

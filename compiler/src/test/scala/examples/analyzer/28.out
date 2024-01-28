@@ -1,0 +1,6 @@
+AnalyzerResult(
+    Record(
+        List(
+            RecordField(x,Integer())
+        ),List()),
+        Enviroment(List(TypeEntry(Identifier(a),Record(List(RecordField(x,Integer())),List())),ValEntry(Identifier(p),Record(List(RecordField(x,Integer())),List())))))

@@ -4,7 +4,7 @@ AnalyzerResult(
     ),
     Enviroment(
         List(
-            EnviromentEntry(
+            ValEntry(
                 Identifier(fac),
                 Function(
                     Integer(),

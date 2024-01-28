@@ -5,7 +5,7 @@ AnalyzerResult(
     ),
     Enviroment(
         List(
-            EnviromentEntry(
+            ValEntry(
                 Identifier(fac),
                 Function(
                     Unknown('x),

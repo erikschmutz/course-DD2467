@@ -1,0 +1,1 @@
+type color = BLUE | RED | YELLOW | RGB of int * int * int;;

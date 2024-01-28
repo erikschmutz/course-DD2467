@@ -44,7 +44,7 @@ object Analyzer {
     evaluate(
       tree.expression,
       enviroment.copyWith(
-        EnviromentEntry(tree.identifier, Types.Unknown("'" + tree.identifier.value), tree)
+        ValEntry(tree.identifier, Types.Unknown("'" + tree.identifier.value), tree)
       )
     ) match {
       case Some(value) => {
@@ -100,7 +100,7 @@ object Analyzer {
               func.tree,
               enviroment.copyWith(
                 List(
-                  EnviromentEntry(
+                  ValEntry(
                     func.tree.asInstanceOf[Trees.LetBinding].identifier,
                     arg._type,
                     arg.tree
@@ -162,7 +162,7 @@ object Analyzer {
               AnalyzerResult(
                 value._type,
                 enviroment.copyWith(
-                  EnviromentEntry(tree.variable, value._type, tree.exprs)
+                  ValEntry(tree.variable, value._type, tree.exprs)
                 ),
                 tree.exprs
               )

@@ -1,0 +1,15 @@
+Program(
+    List(
+        TypeDeclaration(a,
+        TypeEquation(
+            TypeTuple(
+                List(
+                    TypePrimitive(float),
+                    TypePrimitive(float)
+                )
+            )
+        ),
+        List()
+    )
+)
+)

@@ -82,7 +82,7 @@ object Analyzer {
           AnalyzerResult(
             Types.Integer(),
             enviroment.copyWith(
-              EnviromentEntry(tree.variable, value._type)
+              ValEntry(tree.variable, value._type)
             ),
             tree
           )
@@ -117,7 +117,7 @@ object Analyzer {
     evaluate(
       tree.expression,
       enviroment.copyWith(
-        tree.identifiers.map((v) => EnviromentEntry(v, Types.Unknown("'" + v.value)))
+        tree.identifiers.map((v) => ValEntry(v, Types.Unknown("'" + v.value)))
       )
     ) match {
       case Some(value) => {

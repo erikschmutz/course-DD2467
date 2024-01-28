@@ -2,15 +2,15 @@ AnalyzerResult(
     Integer(),
     Enviroment(
         List(
-            EnviromentEntry(
+            ValEntry(
                 Identifier(a),
                 Integer()
             ),
-            EnviromentEntry(
+            ValEntry(
                 Identifier(b),
                 Integer()
             ),
-            EnviromentEntry(
+            ValEntry(
                 Identifier(c),
                 Integer()
             )

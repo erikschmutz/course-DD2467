@@ -12,6 +12,8 @@ object Lexer extends RegexParsers {
   def IF = "if ".r ^^ { _ => Tokens.IF() }
   def THEN = "then ".r ^^ { _ => Tokens.THEN() }
   def REC = "rec ".r ^^ { _ => Tokens.REC() }
+  def OF = "of ".r ^^ { _ => Tokens.OF() }
+  def TYPE = "type ".r ^^ { _ => Tokens.TYPE() }
   def TRUE = "true ".r ^^ { _ => Tokens.TRUE() }
   def FALSE = "false ".r ^^ { _ => Tokens.FALSE() }
   def ELSE = "else ".r ^^ { _ => Tokens.ELSE() }
@@ -25,6 +27,8 @@ object Lexer extends RegexParsers {
   // operators
   def EQUAL = "=".r ^^ { _ => Tokens.EQUAL() }
   def DIVIDER = ";;".r ^^ { _ => Tokens.DIVIDER() }
+  def SEMICOLON = ";".r ^^ { _ => Tokens.SEMICOLON() }
+  def LINE = "\\|".r ^^ { _ => Tokens.LINE() }
   def PLUS = "\\+".r ^^ { _ => Tokens.PLUS() }
   def FLOAT_PLUS = "\\+\\.".r ^^ { _ => Tokens.FLOAT_PLUS() }
   def MINUS = "\\-".r ^^ { _ => Tokens.MINUS() }
@@ -33,8 +37,11 @@ object Lexer extends RegexParsers {
 
   def OPEN_PARENTETHES = "\\(".r ^^ { _ => Tokens.OPEN_PARENTETHES() }
   def CLOSE_PARENTETHES = "\\)".r ^^ { _ => Tokens.CLOSE_PARENTETHES() }
+  def OPEN_CURLY = "\\{".r ^^ { _ => Tokens.OPEN_CURLY() }
+  def CLOSE_CURLY = "\\}".r ^^ { _ => Tokens.CLOSE_CURLY() }
   def COLON = ":".r ^^ { _ => Tokens.COLON() }
   def UNIT = "\\(\\)".r ^^ { _ => Tokens.UNIT() }
+  def COMMA = ",".r ^^ { _ => Tokens.COMMA() }
 
   // literals and identifiers
   def INT_LIT = """\d+(\.\d*)?""".r ^^ { a => Tokens.INT_LIT(a.toInt) }
@@ -42,20 +49,28 @@ object Lexer extends RegexParsers {
     Tokens.FLOAT_LIT(a.toFloat)
   }
   def STR_LIT = "\".*\"".r ^^ { a => Tokens.STR_LIT(a.slice(1, a.length - 1)) }
-  def CHAR_LIT = "\'.*\'".r ^^ { a => Tokens.CHAR_LIT(strip(a)) }
+  def CHAR_LIT = "\'.\'".r ^^ { a => Tokens.CHAR_LIT(strip(a)) }
   def IDENTIFIER = "[a-z]+".r ^^ { a => Tokens.IDENTIFIER(a) }
+  def CONSTR_IDENTIFIER = "[A-Z][a-zA-Z]+".r ^^ { a => Tokens.CONSTR_IDENTIFIER(a) }
+  def TYPE_PARAM = "\'[a-z]+".r ^^ { a => Tokens.TYPE_PARAM(a) }
 
   def ALL = positioned {
     UNIT |
       COMMENT |
       REC |
       TRUE |
+      OF |
       FALSE |
       OPEN_PARENTETHES |
+      OPEN_CURLY |
+      CLOSE_CURLY |
       DIVIDER |
+      SEMICOLON |
+      COMMA |
       CLOSE_PARENTETHES |
       LET |
       LT |
+      TYPE |
       GT |
       IF |
       THEN |
@@ -63,6 +78,7 @@ object Lexer extends RegexParsers {
       IN |
       ARROW |
       FUNCTION |
+      LINE |
       EQUAL |
       FLOAT_PLUS |
       PLUS |
@@ -73,8 +89,10 @@ object Lexer extends RegexParsers {
       INT_LIT |
       STR_LIT |
       CHAR_LIT |
+      TYPE_PARAM | 
       DIVIDE |
-      IDENTIFIER
+      IDENTIFIER | 
+      CONSTR_IDENTIFIER
   }
 
   def evaluate(text: String) = {

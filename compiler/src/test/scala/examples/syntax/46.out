@@ -1,0 +1,23 @@
+Program(
+    List(
+        TypeDeclaration(a,
+        TypeEquation(
+            TypeTuple(
+                List(
+                    TypeFunction(
+                        TypePrimitive(float),
+                        TypePrimitive(float)
+                    ),
+                    TypeTuple(
+                        List(
+                            TypePrimitive(float),
+                            TypePrimitive(float)
+                        )
+                    )
+                )
+            )
+        ),
+        List()
+        )
+    )
+)

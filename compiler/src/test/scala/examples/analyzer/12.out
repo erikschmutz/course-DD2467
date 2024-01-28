@@ -2,21 +2,21 @@ AnalyzerResult(
     Integer(),
     Enviroment(
         List(
-            EnviromentEntry(
+            ValEntry(
                 Identifier(add),
                 Function(
                     Integer(),
                     Integer()
                 )
             ),
-            EnviromentEntry(
+            ValEntry(
                 Identifier(minus),
                 Function(
                     Integer(),
                     Integer()
                 )
             ),
-            EnviromentEntry(
+            ValEntry(
                 Identifier(multi),
                 Function(
                     Integer(),

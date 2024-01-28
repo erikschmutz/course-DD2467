@@ -1,0 +1,17 @@
+Program(
+    List(
+        TypeDeclaration(
+            generic,
+            TypeFieldDeclarations(
+                List(
+                    TypeFieldDeclaration(
+                        left,TypePrimitive(a)
+                    )
+                )
+            ),
+            List(
+                TypeOption('a),
+                TypeOption('b)
+            )
+        )
+))

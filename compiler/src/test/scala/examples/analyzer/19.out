@@ -1,1 +1,1 @@
-AnalyzerResult(Function(Integer(),Function(Integer(),Bool())),Enviroment(List(EnviromentEntry(Identifier(p),Function(Integer(),Function(Integer(),Bool()))))))
+AnalyzerResult(Function(Integer(),Function(Integer(),Bool())),Enviroment(List(ValEntry(Identifier(p),Function(Integer(),Function(Integer(),Bool()))))))

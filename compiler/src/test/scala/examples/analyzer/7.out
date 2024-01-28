@@ -2,7 +2,7 @@ AnalyzerResult(
     Integer(),
     Enviroment(
         List(
-                EnviromentEntry(
+                ValEntry(
                     Identifier(f),
                     Function(
                         Unknown('a),

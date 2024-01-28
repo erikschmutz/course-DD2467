@@ -19,20 +19,32 @@ object Trees {
     }
   }
   case class TypedIdentifier(value: String) extends Expr
+  case class ConstIdentifier(value: String) extends Expr
 
+  case class RecordEntry(key: String, value: Expr) extends Expr
+  case class Record(entries: List[RecordEntry]) extends Expr
   object Tokens {
     case class IntLit(value: Integer) extends Expr
     case class StringLit(value: String) extends Expr
     case class CharLit(value: String) extends Expr
     case class FloatLit(value: Float) extends Expr
+    case class TypeParam(value: String) extends Expr
     case class Bool(value: Boolean) extends Expr
     case class Unit() extends Expr
 
     case class OpenParantheses() extends Tree
+    case class CloseParantheses() extends Tree
+
+    case class OpenCurly() extends Tree
+    case class CloseCurly() extends Tree
+    case class Comma() extends Tree
+    case class Line() extends Tree
+    case class Of() extends Tree
+
     case class LeftArrow() extends Tree
     case class Function() extends Tree
-    case class CloseParantheses() extends Tree
     case class Divider() extends Tree
+    case class Semicolon() extends Tree
 
     case class FloatPlus() extends Operator
     case class FloatMinus() extends Operator
@@ -55,6 +67,7 @@ object Trees {
     case class Then() extends Keyword
     case class Else() extends Keyword
     case class Rec() extends Keyword
+    case class Type() extends Keyword
   }
 
   case class OperatorExpr(
@@ -95,6 +108,21 @@ object Trees {
 
   case class Empty(
   ) extends Expr
+
+  abstract class TypeExp extends Tree
+  case class TypePrimitive(_type: String) extends TypeExp
+  case class TypeTuple(value: List[TypeExp]) extends TypeExp
+  case class TypeFunction(input: TypeExp, output: TypeExp) extends TypeExp
+  
+  case class TypeFieldDeclaration(key: String, _type: TypeExp)
+  case class TypeOption(identifier: String)
+  case class TypeConstraint(name: String, of: Option[TypeExp]) extends TypeInformation
+
+  abstract class TypeInformation extends TypeExp
+  case class TypeFieldDeclarations(definitions: List[TypeFieldDeclaration]) extends TypeInformation
+  case class TypeConstraints(definitions: List[TypeConstraint]) extends TypeInformation
+  case class TypeEquation(definitions: TypeExp) extends TypeInformation
+  case class TypeDeclaration(identifier: String, information: TypeInformation, options: List[TypeOption]) extends Tree
 
   case class Program(statements: List[Tree]) extends Tree
 

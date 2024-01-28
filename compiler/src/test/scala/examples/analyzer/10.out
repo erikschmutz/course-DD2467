@@ -2,11 +2,11 @@ AnalyzerResult(
     Integer(),
     Enviroment(
         List(
-            EnviromentEntry(
+            ValEntry(
                 Identifier(g),
                 Function(Integer(),Integer())
             ),
-            EnviromentEntry(
+            ValEntry(
                 Identifier(f),
                 Function(Integer(),Integer())
             )

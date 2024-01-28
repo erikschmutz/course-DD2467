@@ -1,0 +1,19 @@
+AnalyzerResult(
+    Unit(),
+    Enviroment(
+        List(
+            TypeEntry(
+                Identifier(a),
+                Record(
+                    List(
+                        RecordField(
+                            x,
+                            Integer()
+                        )
+                    ),
+                    List()
+                )
+            )
+        )
+    )
+)
