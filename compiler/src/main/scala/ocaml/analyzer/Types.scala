@@ -20,6 +20,20 @@ object Types {
     def prettyPrint: String = name + " {" + fields.map(v => v.key + ":" + v._type.prettyPrint).mkString(",") + "}"
   }
 
+  case class Constraint(name: String, of: Option[Type], generics: List[String]) extends Type {
+    def prettyPrint: String = {
+     println("Constaint ", of)
+      of match {
+        case Some(value) => name + " of " + value.prettyPrint
+        case None        => name
+      }
+    }
+  }
+
+  case class Constraints(name: String, constraints: List[Constraint], generics: List[String]) extends Type {
+    def prettyPrint: String = name + " (" + constraints.map(c => c.prettyPrint).mkString(" | ") + ")"
+  }
+
   case class Tuple(fields: List[Type], generics: List[String]) extends Type {
     def prettyPrint: String = fields.map(_.prettyPrint).mkString(" * ")
   }
@@ -41,5 +55,4 @@ object Types {
     }
   }
 
-  
 }

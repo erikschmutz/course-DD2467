@@ -1,13 +1,18 @@
 type a = {
     x: int
-}
+};;
 
-let p = {
+type b = {
+    x: int
+};;
+
+let a = {
     x=1
-}
+};;
 
 (*====================
 type a : a {x:int}
-val p : a {x:int}
-- :a {x:int}
+type b : b {x:int}
+val a : b {x:int}
+- :b {x:int}
 ====================*)

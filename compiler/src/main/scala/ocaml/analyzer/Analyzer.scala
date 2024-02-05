@@ -81,6 +81,47 @@ object Analyzer {
     Some(AnalyzerResult(Types.Function(Types.Unknown("a"), Types.Unknown("b")), enviroment))
   }
 
+  def evaluate(tree: Trees.Tuple, enviroment: Enviroment): T = {
+    tree.entries.forall((entry) => {
+      evaluate(entry, enviroment) match {
+        case None    => false
+        case Some(_) => true
+      }
+    })
+
+    val _type = Types.Tuple(
+      tree.entries.map((entry) => {
+        evaluate(entry, enviroment).get._type
+      }),
+      List()
+    );
+
+    Some(
+      AnalyzerResult(
+        _type,
+        enviroment
+      )
+    )
+  }
+
+  def evaluate(tree: Trees.Constructor, enviroment: Enviroment): T = {
+    evaluate(tree.values, enviroment) match {
+      case Some(res) => {
+        println("Type")
+        println(res._type)
+        println(findType(tree, enviroment))
+        findType(tree, enviroment) match {
+          case Some(TypeEntry(_, _type: Types.Constraint)) if _type.of.get == res._type => {
+            return Some(AnalyzerResult(_type, enviroment))
+          }
+          case _ => None
+        }
+      }
+      case None => None
+    }
+
+  }
+
   def evaluate(tree: Trees.Tree, enviroment: Enviroment): T = {
     tree match {
       case a: Trees.Tokens.IntLit   => evaluate(a, enviroment)
@@ -90,11 +131,13 @@ object Analyzer {
       case a: Trees.Tokens.FloatLit => evaluate(a, enviroment)
       case a: Trees.Substitutions   => evaluate(a, enviroment)
       case a: Trees.LetBinding      => evaluate(a, enviroment)
+      case a: Trees.Tuple           => evaluate(a, enviroment)
+      case a: Trees.Constructor     => evaluate(a, enviroment)
       case a: Trees.If              => evaluate(a, enviroment)
       case a: Trees.LetBindingExpr  => evaluate(a, enviroment)
       case a: Trees.OperatorExpr    => evaluate(a, enviroment)
       case a: Trees.Identifier      => evaluate(a, enviroment)
-      case a: Trees.Record      => evaluate(a, enviroment)
+      case a: Trees.Record          => evaluate(a, enviroment)
       case a: Trees.Assignment      => evaluate(a, enviroment)
       case a: Trees.TypeDeclaration => evaluate(a, enviroment)
       case _                        => None
@@ -225,12 +268,27 @@ object Analyzer {
           Some(
             Types.Record(
               name.getOrElse(""),
-              value.definitions.map(v=>Types.RecordField(v.key, getType(v._type, None).get)),
+              value.definitions.map(v => Types.RecordField(v.key, getType(v._type, None).get)),
               List()
             )
           )
+        case value: Trees.TypeEquation => getType(value.definitions, None)
+        case value: Trees.TypeConstraints =>
+          Some(
+            Types.Constraints(
+              name.get,
+              value.definitions.map(v => {
+                v.of match {
+                  case Some(value) => Types.Constraint(v.name, getType(value, None), List())
+                  case None        => Types.Constraint(v.name, None, List())
+                }
+              }),
+              List()
+            )
+          )
+
         case Trees.TypePrimitive(key) if key == "float" => Some(Types.Float())
-        case Trees.TypePrimitive(key) if key == "int" => Some(Types.Integer())
+        case Trees.TypePrimitive(key) if key == "int"   => Some(Types.Integer())
         case _                                          => None
       }
     }
@@ -254,7 +312,16 @@ object Analyzer {
             )
           )
         )
-        
+      case _type: Trees.TypeConstraints =>
+        Some(
+          AnalyzerResult(
+            Types.Unit(),
+            enviroment.addType(
+              TypeEntry(tree.identifier, getType(_type, Some(tree.identifier)).get)
+            )
+          )
+        )
+
     }
   }
 
@@ -270,39 +337,50 @@ object Analyzer {
     )
   }
 
-  def findType(tree: Trees.Record, enviroment: Enviroment): Option[TypeEntry] = {
-    val types = enviroment.entries.filter(v=>v.isInstanceOf[TypeEntry]).asInstanceOf[List[TypeEntry]]
-    println("Types")
-    println(types)
-    println("===")
-    types.reverse.map(_type =>{
+  def findType(tree: Trees.Constructor, enviroment: Enviroment): Option[TypeEntry] = {
+    val types = enviroment.entries.filter(v => v.isInstanceOf[TypeEntry]).asInstanceOf[List[TypeEntry]]
+    types.reverse.foreach(_type => {
       _type._type match {
-        case Types.Record(_, fields, generics) if fields.length == tree.entries.length => {
-          if (fields.forall((b)=>{
-            val entry = tree.entries.find(v=>v.key == b.key);
-            println("key")
-            println(_type.identifier)
-            entry match {
-              case Some(v)=> {
-                evaluate(v.value, enviroment).get._type == b._type
-              }
-              case None => false
-            } 
-          }))
-          return Some(_type)
+        case constr: Types.Constraints => {
+          constr.constraints.find(p => p.name == tree.identifier) match {
+            case Some(value) => return Some(TypeEntry(value.name, value))
+            case None        =>
+          }
         }
       }
     })
-  
+    None
+  }
+
+  def findType(tree: Trees.Record, enviroment: Enviroment): Option[TypeEntry] = {
+    val types = enviroment.entries.filter(v => v.isInstanceOf[TypeEntry]).asInstanceOf[List[TypeEntry]]
+    types.reverse.map(_type => {
+      _type._type match {
+        case Types.Record(_, fields, generics) if fields.length == tree.entries.length => {
+          if (
+            fields.forall((b) => {
+              val entry = tree.entries.find(v => v.key == b.key);
+              entry match {
+                case Some(v) => {
+                  evaluate(v.value, enviroment).get._type == b._type
+                }
+                case None => false
+              }
+            })
+          )
+            return Some(_type)
+        }
+      }
+    })
 
     None
   }
-  
+
   def evaluate(tree: Trees.Record, enviroment: Enviroment): T = {
     println(tree)
     findType(tree, enviroment) match {
       case Some(value) => Some(AnalyzerResult(value._type, enviroment))
-      case None => None
+      case None        => None
     }
   }
 

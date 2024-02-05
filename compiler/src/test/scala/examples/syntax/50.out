@@ -1,0 +1,14 @@
+Program(
+    List(
+        Constructor(
+            RGB,
+            Tuple(
+                List(
+                    IntLit(10),
+                    IntLit(10),
+                    IntLit(10)
+                )
+            )
+        )
+    )
+)

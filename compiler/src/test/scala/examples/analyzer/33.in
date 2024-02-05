@@ -1,0 +1,8 @@
+type color = YELLOW | RGB of int * int * int;;
+let red = RGB(255, 0, 0);;
+
+(*====================
+type color : color (YELLOW | RGB of int * int * int)
+val red : RGB of int * int * int
+- :RGB of int * int * int
+====================*)

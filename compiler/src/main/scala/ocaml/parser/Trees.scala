@@ -23,6 +23,10 @@ object Trees {
 
   case class RecordEntry(key: String, value: Expr) extends Expr
   case class Record(entries: List[RecordEntry]) extends Expr
+  case class Tuple(entries: List[Expr]) extends Expr
+  case class Constructor(identifier: String, values: Expr) extends Expr
+
+  
   object Tokens {
     case class IntLit(value: Integer) extends Expr
     case class StringLit(value: String) extends Expr

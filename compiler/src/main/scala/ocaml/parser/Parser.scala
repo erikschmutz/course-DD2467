@@ -498,12 +498,24 @@ object Parser extends Parsers {
       case left ~ operator ~ right => Trees.OperatorExpr(left, right, operator)
     }
 
+  def TypeConstructor: Parser[Trees.Constructor] =
+    Terminals.ConstIdentifier ~ Terminals.OpenParantheses ~ Expression ~ Terminals.CloseParantheses ^^ {
+      case identifier ~ _ ~ values ~ _ => Trees.Constructor(identifier.value, values)
+    }
+
+  def Tuple: Parser[Trees.Tuple] =
+    SimpleExpression ~ Terminals.Comma ~ rep1sep(SimpleExpression, Terminals.Comma) ^^ { case expr ~ _ ~ exprs =>
+      Trees.Tuple(List(expr) ::: exprs)
+    }
+
   def SimpleExpression: Parser[Trees.Expr] =
     OperatorExpr | ParentensisExpression | Primitive | Identifier
 
   def ParentensisExpression: Parser[Trees.Expr] = Terminals.OpenParantheses ~> Expression <~ Terminals.CloseParantheses
   def Expression: Parser[Trees.Expr] =
     Record.Record |
+      Tuple |
+      TypeConstructor |
       ParenthesisedSubstitution | Substitutions | IfExpr | FormulaExpr | LetBindingExpr | FunctionExpression | SimpleExpression;
 
   def Definition = (Types.TypeDef | BindingAssignments | BindingRecAssignments | Assignment)

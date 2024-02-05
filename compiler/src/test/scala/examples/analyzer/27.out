@@ -5,6 +5,7 @@ AnalyzerResult(
             TypeEntry(
                 Identifier(a),
                 Record(
+                    a, 
                     List(
                         RecordField(
                             x,
