@@ -82,13 +82,6 @@ object Analyzer {
   }
 
   def evaluate(tree: Trees.Tuple, enviroment: Enviroment): T = {
-    tree.entries.forall((entry) => {
-      evaluate(entry, enviroment) match {
-        case None    => false
-        case Some(_) => true
-      }
-    })
-
     val _type = Types.Tuple(
       tree.entries.map((entry) => {
         evaluate(entry, enviroment).get._type
@@ -99,6 +92,24 @@ object Analyzer {
     Some(
       AnalyzerResult(
         _type,
+        enviroment
+      )
+    )
+  }
+
+  def evaluate(tree: Trees.ArrayList, enviroment: Enviroment): T = {
+    val types = tree.entries.map((entry) => {
+      evaluate(entry, enviroment) match {
+        case None    => return None
+        case Some(v) => v._type
+      }
+    })
+
+    if (!types.forall(t => t == types(0))) return None
+
+    Some(
+      AnalyzerResult(
+        Types.ArrayList(types(0)),
         enviroment
       )
     )
@@ -140,6 +151,7 @@ object Analyzer {
       case a: Trees.Record          => evaluate(a, enviroment)
       case a: Trees.Assignment      => evaluate(a, enviroment)
       case a: Trees.TypeDeclaration => evaluate(a, enviroment)
+      case a: Trees.ArrayList       => evaluate(a, enviroment)
       case _                        => None
     }
   }
@@ -532,6 +544,15 @@ object Analyzer {
 
             None
           }
+        }
+
+      }
+      case Some(AnalyzerResult(func: Types.ArrayList, enviroment)) => {
+        evaluate(tree.values, enviroment) match {
+          case Some(arg) if arg._type.isInstanceOf[Types.Integer] => {
+            return Some(AnalyzerResult(func._type, enviroment))
+          }
+          case _ => None
         }
 
       }

@@ -24,6 +24,7 @@ object Trees {
   case class RecordEntry(key: String, value: Expr) extends Expr
   case class Record(entries: List[RecordEntry]) extends Expr
   case class Tuple(entries: List[Expr]) extends Expr
+  case class ArrayList(entries: List[Expr]) extends Expr
   case class Constructor(identifier: String, values: Expr) extends Expr
 
   
@@ -41,6 +42,10 @@ object Trees {
 
     case class OpenCurly() extends Tree
     case class CloseCurly() extends Tree
+    
+    case class ArrayOpen() extends Tree
+    case class ArrayClose() extends Tree
+
     case class Comma() extends Tree
     case class Line() extends Tree
     case class Of() extends Tree

@@ -293,6 +293,16 @@ object Parser extends Parsers {
       "Multiply",
       { case Tokens.MULTIPLY() => Trees.Tokens.Multiply() }
     )
+
+    val ArrayOpen = accept(
+      "ArrayOpen",
+      { case Tokens.ARRAY_OPEN() => Trees.Tokens.ArrayOpen() }
+    )
+
+    val ArrayClose = accept(
+      "ArrayOpen",
+      { case Tokens.ARRAY_CLOSE() => Trees.Tokens.ArrayClose() }
+    )
   }
 
   object Types {
@@ -508,12 +518,18 @@ object Parser extends Parsers {
       Trees.Tuple(List(expr) ::: exprs)
     }
 
+  def ArrayList: Parser[Trees.ArrayList] =
+    Terminals.ArrayOpen ~ rep1sep(SimpleExpression, Terminals.Comma) ~ Terminals.ArrayClose ^^ { case _ ~ exprs ~ _ =>
+      Trees.ArrayList(exprs)
+    }
+
   def SimpleExpression: Parser[Trees.Expr] =
     OperatorExpr | ParentensisExpression | Primitive | Identifier
 
   def ParentensisExpression: Parser[Trees.Expr] = Terminals.OpenParantheses ~> Expression <~ Terminals.CloseParantheses
   def Expression: Parser[Trees.Expr] =
     Record.Record |
+    ArrayList |
       Tuple |
       TypeConstructor |
       ParenthesisedSubstitution | Substitutions | IfExpr | FormulaExpr | LetBindingExpr | FunctionExpression | SimpleExpression;

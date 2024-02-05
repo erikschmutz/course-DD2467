@@ -37,6 +37,11 @@ object Types {
   case class Tuple(fields: List[Type], generics: List[String]) extends Type {
     def prettyPrint: String = fields.map(_.prettyPrint).mkString(" * ")
   }
+
+  case class ArrayList(_type: Type) extends Type {
+    def prettyPrint: String = _type.prettyPrint + "[||]"
+  }
+
   case class Char() extends Type {
     def prettyPrint: String = "char"
   }

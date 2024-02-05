@@ -35,6 +35,8 @@ object Lexer extends RegexParsers {
   def MULTIPLY = "\\*".r ^^ { _ => Tokens.MULTIPLY() }
   def DIVIDE = "\\/".r ^^ { _ => Tokens.DIVIDE() }
 
+  def ARRAY_OPEN = "\\[\\|".r ^^ { _ => Tokens.ARRAY_OPEN() }
+  def ARRAY_CLOSE = "\\|\\]".r ^^ { _ => Tokens.ARRAY_CLOSE() }
   def OPEN_PARENTETHES = "\\(".r ^^ { _ => Tokens.OPEN_PARENTETHES() }
   def CLOSE_PARENTETHES = "\\)".r ^^ { _ => Tokens.CLOSE_PARENTETHES() }
   def OPEN_CURLY = "\\{".r ^^ { _ => Tokens.OPEN_CURLY() }
@@ -55,6 +57,8 @@ object Lexer extends RegexParsers {
   def TYPE_PARAM = "\'[a-z]+".r ^^ { a => Tokens.TYPE_PARAM(a) }
 
   def ALL = positioned {
+          ARRAY_OPEN |
+      ARRAY_CLOSE |
     UNIT |
       COMMENT |
       REC |

@@ -39,6 +39,8 @@ object Tokens {
   case class FALSE() extends TokenKind
   case class UNIT() extends TokenKind
   case class LINE() extends TokenKind
+  case class ARRAY_OPEN() extends TokenKind
+  case class ARRAY_CLOSE() extends TokenKind
 
   /* Operators */
   case class EQUAL() extends TokenKind

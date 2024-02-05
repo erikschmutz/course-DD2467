@@ -1,0 +1,12 @@
+Program(
+    List(
+        Assignment(
+            Identifier(i),
+            ArrayList(
+                List(
+                    IntLit(1),IntLit(2)
+                )
+            )
+        )
+    )
+)
