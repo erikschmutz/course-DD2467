@@ -1,0 +1,12 @@
+Program(
+    List(
+        Assignment(
+            Identifier(i),
+            OperatorExpr(
+                DoubleLit(1.0),
+                DoubleLit(2.0),
+                DoublePlus()
+            )
+        )
+    )
+)

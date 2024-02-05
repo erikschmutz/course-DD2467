@@ -33,6 +33,7 @@ object Trees {
     case class StringLit(value: String) extends Expr
     case class CharLit(value: String) extends Expr
     case class FloatLit(value: Float) extends Expr
+    case class DoubleLit(value: Double) extends Expr
     case class TypeParam(value: String) extends Expr
     case class Bool(value: Boolean) extends Expr
     case class Unit() extends Expr
@@ -59,6 +60,11 @@ object Trees {
     case class FloatMinus() extends Operator
     case class FloatDivide() extends Operator
     case class FloatMultiply() extends Operator
+
+    case class DoublePlus() extends Operator
+    case class DoubleMinus() extends Operator
+    case class DoubleMultiply() extends Operator
+    case class DoubleDivide() extends Operator
 
     case class Plus() extends Operator
     case class Minus() extends Operator

@@ -14,6 +14,9 @@ object Types {
   case class Integer() extends Type {
     def prettyPrint: String = "int"
   }
+  case class Double() extends Type {
+    def prettyPrint: String = "double"
+  }
 
   case class RecordField(key: String, _type: Type)
   case class Record(name: String, fields: List[RecordField], generics: List[String]) extends Type {

@@ -172,6 +172,12 @@ object Parser extends Parsers {
         { case Tokens.FLOAT_LIT(value) => Trees.Tokens.FloatLit(value) }
       )
 
+    val DoubleLit =
+      accept(
+        "FloatLit",
+        { case Tokens.DOUBLE_LIT(value) => Trees.Tokens.DoubleLit(value) }
+      )
+
     val Plus = accept(
       "Plus",
       { case Tokens.PLUS() => Trees.Tokens.Plus() }
@@ -185,6 +191,26 @@ object Parser extends Parsers {
     val FloatPlus = accept(
       "DivideFloat",
       { case Tokens.FLOAT_PLUS() => Trees.Tokens.FloatPlus() }
+    )
+
+    val DoublePlus = accept(
+      "DoubleMinus",
+      { case Tokens.DOUBLE_PLUS() => Trees.Tokens.DoublePlus() }
+    )
+
+    val DoubleMinus = accept(
+      "DoubleMinus",
+      { case Tokens.DOUBLE_MINUS() => Trees.Tokens.DoubleMinus() }
+    )
+
+    val DoubleMultiply = accept(
+      "DoubleMultiply",
+      { case Tokens.DOUBLE_MULTIPLY() => Trees.Tokens.DoubleMultiply() }
+    )
+
+    val DoubleDivide = accept(
+      "DoubleDivide",
+      { case Tokens.DOUBLE_DIVIDE() => Trees.Tokens.DoubleDivide() }
     )
 
     val Function = accept(
@@ -384,9 +410,10 @@ object Parser extends Parsers {
       Trees.Identifier(name.value, Option(_type.value))
     }
 
-  def OperatorExpr: Parser[Trees.Expr] = Term ~ rep(AddExpr | MinusExpr | FloatAddExpr) ^^ { case a ~ b =>
-    (a /: b)((acc, f) => f(acc))
-  }
+  def OperatorExpr: Parser[Trees.Expr] =
+    Term ~ rep(AddExpr | MinusExpr | FloatAddExpr | DoubleAddExpression | DoubleMinusExpression) ^^ { case a ~ b =>
+      (a /: b)((acc, f) => f(acc))
+    }
 
   def AddExpr = (Terminals.Plus ~> Term) ^^ { case a =>
     Trees.OperatorExpr(_, a, Trees.Tokens.Plus())
@@ -396,13 +423,30 @@ object Parser extends Parsers {
     Trees.OperatorExpr(_, a, Trees.Tokens.FloatPlus())
   }
 
+  def DoubleAddExpression = (Terminals.DoublePlus ~> Term) ^^ { case a =>
+    Trees.OperatorExpr(_, a, Trees.Tokens.DoublePlus())
+  }
+
+  def DoubleMinusExpression = (Terminals.DoubleMinus ~> Term) ^^ { case a =>
+    Trees.OperatorExpr(_, a, Trees.Tokens.DoubleMinus())
+  }
+
+  def DoubleMultiExpression = (Terminals.DoubleMultiply ~> Term) ^^ { case a =>
+    Trees.OperatorExpr(_, a, Trees.Tokens.DoubleMultiply())
+  }
+
+  def DoubleDivideExpression = (Terminals.DoubleDivide ~> Term) ^^ { case a =>
+    Trees.OperatorExpr(_, a, Trees.Tokens.DoubleDivide())
+  }
+
   def MinusExpr = (Terminals.Minus ~> Term) ^^ { case a =>
     Trees.OperatorExpr(_, a, Trees.Tokens.Minus())
   }
 
-  def Term = Factor ~ rep(MultiplyExpr | DivideExpr) ^^ { case a ~ b =>
-    (a /: b)((acc, f) => f(acc))
-  }
+  def Term: Parser[Trees.Expr] =
+    Factor ~ rep(MultiplyExpr | DivideExpr | DoubleMultiExpression | DoubleDivideExpression) ^^ { case a ~ b =>
+      (a /: b)((acc, f) => f(acc))
+    }
 
   def MultiplyExpr = (Terminals.Multiply ~> Factor) ^^ { case a =>
     Trees.OperatorExpr(_, a, Trees.Tokens.Multiply())
@@ -418,7 +462,7 @@ object Parser extends Parsers {
   def Identifier = TypedIdentifier | Terminals.Identifier
   def Operator = Terminals.Plus | Terminals.Minus | Terminals.Multiply | Terminals.Divide | Terminals.FloatPlus
   def Primitive =
-    Terminals.IntLit | Terminals.False | Terminals.True | Terminals.FloatLit | Terminals.Unit | Terminals.StringLit | Terminals.Identifier | Terminals.CharLit;
+    Terminals.IntLit | Terminals.False | Terminals.True | Terminals.FloatLit | Terminals.DoubleLit | Terminals.Unit | Terminals.StringLit | Terminals.Identifier | Terminals.CharLit;
 
   def Assignment = Terminals.Let ~ Identifier ~ Terminals.Equal ~ Expression ^^ { case (_ ~ identifier ~ _ ~ value) =>
     Trees.Assignment(identifier, value)
@@ -529,7 +573,7 @@ object Parser extends Parsers {
   def ParentensisExpression: Parser[Trees.Expr] = Terminals.OpenParantheses ~> Expression <~ Terminals.CloseParantheses
   def Expression: Parser[Trees.Expr] =
     Record.Record |
-    ArrayList |
+      ArrayList |
       Tuple |
       TypeConstructor |
       ParenthesisedSubstitution | Substitutions | IfExpr | FormulaExpr | LetBindingExpr | FunctionExpression | SimpleExpression;

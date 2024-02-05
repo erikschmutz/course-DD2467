@@ -135,24 +135,25 @@ object Analyzer {
 
   def evaluate(tree: Trees.Tree, enviroment: Enviroment): T = {
     tree match {
-      case a: Trees.Tokens.IntLit   => evaluate(a, enviroment)
-      case a: Trees.Tokens.CharLit  => evaluate(a, enviroment)
-      case a: Trees.Tokens.Bool     => evaluate(a, enviroment)
-      case a: Trees.Recursive       => evaluate(a, enviroment)
-      case a: Trees.Tokens.FloatLit => evaluate(a, enviroment)
-      case a: Trees.Substitutions   => evaluate(a, enviroment)
-      case a: Trees.LetBinding      => evaluate(a, enviroment)
-      case a: Trees.Tuple           => evaluate(a, enviroment)
-      case a: Trees.Constructor     => evaluate(a, enviroment)
-      case a: Trees.If              => evaluate(a, enviroment)
-      case a: Trees.LetBindingExpr  => evaluate(a, enviroment)
-      case a: Trees.OperatorExpr    => evaluate(a, enviroment)
-      case a: Trees.Identifier      => evaluate(a, enviroment)
-      case a: Trees.Record          => evaluate(a, enviroment)
-      case a: Trees.Assignment      => evaluate(a, enviroment)
-      case a: Trees.TypeDeclaration => evaluate(a, enviroment)
-      case a: Trees.ArrayList       => evaluate(a, enviroment)
-      case _                        => None
+      case a: Trees.Tokens.IntLit    => evaluate(a, enviroment)
+      case a: Trees.Tokens.DoubleLit => evaluate(a, enviroment)
+      case a: Trees.Tokens.CharLit   => evaluate(a, enviroment)
+      case a: Trees.Tokens.Bool      => evaluate(a, enviroment)
+      case a: Trees.Recursive        => evaluate(a, enviroment)
+      case a: Trees.Tokens.FloatLit  => evaluate(a, enviroment)
+      case a: Trees.Substitutions    => evaluate(a, enviroment)
+      case a: Trees.LetBinding       => evaluate(a, enviroment)
+      case a: Trees.Tuple            => evaluate(a, enviroment)
+      case a: Trees.Constructor      => evaluate(a, enviroment)
+      case a: Trees.If               => evaluate(a, enviroment)
+      case a: Trees.LetBindingExpr   => evaluate(a, enviroment)
+      case a: Trees.OperatorExpr     => evaluate(a, enviroment)
+      case a: Trees.Identifier       => evaluate(a, enviroment)
+      case a: Trees.Record           => evaluate(a, enviroment)
+      case a: Trees.Assignment       => evaluate(a, enviroment)
+      case a: Trees.TypeDeclaration  => evaluate(a, enviroment)
+      case a: Trees.ArrayList        => evaluate(a, enviroment)
+      case _                         => None
     }
   }
 
@@ -259,6 +260,21 @@ object Analyzer {
               .withType(tree.right, Types.Integer())
           )
         )
+      case (
+            Some(AnalyzerResult(l, le)),
+            op: Trees.Tokens.DoublePlus,
+            Some(AnalyzerResult(r, re))
+          ) if canBeType[Types.Double](l) && canBeType[Types.Double](r) =>
+        Some(
+          AnalyzerResult(
+            Types.Double(),
+            enviroment
+              .copyWith(le.entries)
+              .copyWith(re.entries)
+              .withType(tree.left, Types.Double())
+              .withType(tree.right, Types.Double())
+          )
+        )
       case _ => {
 
         None
@@ -340,6 +356,12 @@ object Analyzer {
   def evaluate(tree: Trees.Tokens.IntLit, enviroment: Enviroment): T = {
     Some(
       AnalyzerResult(Types.Integer(), enviroment)
+    )
+  }
+
+  def evaluate(tree: Trees.Tokens.DoubleLit, enviroment: Enviroment): T = {
+    Some(
+      AnalyzerResult(Types.Double(), enviroment)
     )
   }
 
