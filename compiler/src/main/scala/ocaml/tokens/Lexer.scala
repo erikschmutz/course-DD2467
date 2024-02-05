@@ -30,7 +30,11 @@ object Lexer extends RegexParsers {
   def SEMICOLON = ";".r ^^ { _ => Tokens.SEMICOLON() }
   def LINE = "\\|".r ^^ { _ => Tokens.LINE() }
   def PLUS = "\\+".r ^^ { _ => Tokens.PLUS() }
-  def FLOAT_PLUS = "\\+\\.".r ^^ { _ => Tokens.FLOAT_PLUS() }
+  def FLOAT_PLUS = """\+\.""".r ^^ { _ => Tokens.FLOAT_PLUS() }
+  def DOUBLE_PLUS = """\+\.\.""".r ^^ { _ => Tokens.DOUBLE_PLUS() }
+  def DOUBLE_MINUS = """\-\.\.""".r ^^ { _ => Tokens.DOUBLE_MINUS() }
+  def DOUBLE_MULTIPLY = """\*\.\.""".r ^^ { _ => Tokens.DOUBLE_MULTIPLY() }
+  def DOUBLE_DIVIDE = """\\\.\.""".r ^^ { _ => Tokens.DOUBLE_DIVIDE() }
   def MINUS = "\\-".r ^^ { _ => Tokens.MINUS() }
   def MULTIPLY = "\\*".r ^^ { _ => Tokens.MULTIPLY() }
   def DIVIDE = "\\/".r ^^ { _ => Tokens.DIVIDE() }
@@ -50,6 +54,11 @@ object Lexer extends RegexParsers {
   def FLOAT_LIT = """([0-9])*\.([0-9])*""".r ^^ { a =>
     Tokens.FLOAT_LIT(a.toFloat)
   }
+
+  def DOUBLE_LIT = """([0-9])*\.\.([0-9])*""".r ^^ { a =>
+    Tokens.DOUBLE_LIT(a.replace("..", ".").toDouble)
+  }
+
   def STR_LIT = "\".*\"".r ^^ { a => Tokens.STR_LIT(a.slice(1, a.length - 1)) }
   def CHAR_LIT = "\'.\'".r ^^ { a => Tokens.CHAR_LIT(strip(a)) }
   def IDENTIFIER = "[a-z]+".r ^^ { a => Tokens.IDENTIFIER(a) }
@@ -57,9 +66,13 @@ object Lexer extends RegexParsers {
   def TYPE_PARAM = "\'[a-z]+".r ^^ { a => Tokens.TYPE_PARAM(a) }
 
   def ALL = positioned {
-          ARRAY_OPEN |
+    DOUBLE_PLUS |
+      DOUBLE_MINUS |
+      DOUBLE_MULTIPLY |
+      DOUBLE_DIVIDE |
+      ARRAY_OPEN |
       ARRAY_CLOSE |
-    UNIT |
+      UNIT |
       COMMENT |
       REC |
       TRUE |
@@ -89,13 +102,14 @@ object Lexer extends RegexParsers {
       MINUS |
       COLON |
       MULTIPLY |
+      DOUBLE_LIT |
       FLOAT_LIT |
       INT_LIT |
       STR_LIT |
       CHAR_LIT |
-      TYPE_PARAM | 
+      TYPE_PARAM |
       DIVIDE |
-      IDENTIFIER | 
+      IDENTIFIER |
       CONSTR_IDENTIFIER
   }
 

@@ -16,6 +16,7 @@ object Tokens {
   case class FLOAT_LIT(value: Float) extends Token(value)
   case class CHAR_LIT(value: String) extends Token(value)
   case class STR_LIT(value: String) extends Token(value)
+  case class DOUBLE_LIT(value: Double) extends Token(value)
 
   /* Identifiers */
   case class CONSTR_IDENTIFIER(value: String) extends Token(value)
@@ -55,6 +56,11 @@ object Tokens {
   case class FLOAT_MINUS() extends TokenKind
   case class FLOAT_DIVIDE() extends TokenKind
   case class FLOAT_MULTIPLY() extends TokenKind
+
+  case class DOUBLE_PLUS() extends TokenKind
+  case class DOUBLE_MINUS() extends TokenKind
+  case class DOUBLE_DIVIDE() extends TokenKind
+  case class DOUBLE_MULTIPLY() extends TokenKind
 
   case class OPEN_PARENTETHES() extends TokenKind
   case class CLOSE_PARENTETHES() extends TokenKind
