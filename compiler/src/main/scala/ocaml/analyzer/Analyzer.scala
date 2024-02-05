@@ -1,6 +1,7 @@
 import ocaml.trees._
 import ocaml.types._
 import ocaml.enviroment._
+import scala.reflect.ClassTag
 
 case class AnalyzerResult(_type: Types.Type, enviroment: Enviroment) extends PrettyPrint {
   override def toString() = {
@@ -15,8 +16,9 @@ case class AnalyzerResult(_type: Types.Type, enviroment: Enviroment) extends Pre
 object Analyzer {
   type T = Option[AnalyzerResult]
 
-  def canBeType[Q](value: Any) = {
-    value.isInstanceOf[Q] || value.isInstanceOf[Types.Unknown]
+  def canBeType[Q: ClassTag](value: Any): Boolean = {
+    if (value.getClass == classOf[Types.Unknown]) true
+    else implicitly[ClassTag[Q]].runtimeClass.isInstance(value)
   }
 
   def lookupTypeStr(value: String) = {
