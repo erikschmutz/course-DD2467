@@ -1,0 +1,8 @@
+type 'a list = Node of 'a;;
+let a = Node(1);;
+
+(*====================
+type list : list (Node of 'a)
+val a : Node of int
+- :Node of int
+====================*)

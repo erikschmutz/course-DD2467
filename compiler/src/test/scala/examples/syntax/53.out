@@ -1,0 +1,36 @@
+Program(
+    List(
+        TypeDeclaration(tree,
+        TypeConstraints(
+            List(
+                TypeConstraint(Leaf,None),
+                TypeConstraint(
+                    Node,
+                    Some(
+                        TypeTuple(
+                            List(
+                                TypeOption('a),
+                                TypeUsage(
+                                    tree,
+                                    List(
+                                        TypeOption('a)
+                                    )
+                                ),
+                                TypeUsage(
+                                    tree,
+                                    List(
+                                        TypeOption('a)
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        ),
+        List(
+            TypeOption('a)
+        )
+        )
+    )
+)

@@ -1,0 +1,1 @@
+AnalyzerResult(Constraint(Node,Some(Integer()),List(Integer())),Enviroment(List(TypeEntry(Identifier(list),Constraints(list,List(Constraint(Node,Some(Unknown('a)),List('a))),List('a))),ValEntry(Identifier(a),Constraint(Node,Some(Integer()),List(Integer()))))))

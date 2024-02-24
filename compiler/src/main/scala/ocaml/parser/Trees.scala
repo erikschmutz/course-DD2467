@@ -130,13 +130,14 @@ object Trees {
   case class TypeFunction(input: TypeExp, output: TypeExp) extends TypeExp
   
   case class TypeFieldDeclaration(key: String, _type: TypeExp)
-  case class TypeOption(identifier: String)
+  case class TypeOption(identifier: String) extends TypeExp
   case class TypeConstraint(name: String, of: Option[TypeExp]) extends TypeInformation
 
   abstract class TypeInformation extends TypeExp
   case class TypeFieldDeclarations(definitions: List[TypeFieldDeclaration]) extends TypeInformation
   case class TypeConstraints(definitions: List[TypeConstraint]) extends TypeInformation
   case class TypeEquation(definitions: TypeExp) extends TypeInformation
+  case class TypeUsage(identifier: String, options: List[TypeOption]) extends TypeExp
   case class TypeDeclaration(identifier: String, information: TypeInformation, options: List[TypeOption]) extends Tree
 
   case class Program(statements: List[Tree]) extends Tree

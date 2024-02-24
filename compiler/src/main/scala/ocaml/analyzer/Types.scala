@@ -9,12 +9,18 @@ object Types {
 
   case class Unknown(id: String) extends Type {
     def prettyPrint: String = id
-
   }
-  case class Integer() extends Type {
+
+  case class CustomType(id: String, generics: List[String] = List.empty) extends Type {
+    def prettyPrint: String = generics.mkString(",") + " " + id
+  }
+
+  abstract class Primitive extends Type
+  case class Integer() extends Primitive {
     def prettyPrint: String = "int"
   }
-  case class Double() extends Type {
+
+  case class Double() extends Primitive {
     def prettyPrint: String = "double"
   }
 
@@ -25,7 +31,6 @@ object Types {
 
   case class Constraint(name: String, of: Option[Type], generics: List[String]) extends Type {
     def prettyPrint: String = {
-     println("Constaint ", of)
       of match {
         case Some(value) => name + " of " + value.prettyPrint
         case None        => name
@@ -45,16 +50,16 @@ object Types {
     def prettyPrint: String = _type.prettyPrint + "[||]"
   }
 
-  case class Char() extends Type {
+  case class Char() extends Primitive {
     def prettyPrint: String = "char"
   }
-  case class Float() extends Type {
+  case class Float() extends Primitive {
     def prettyPrint: String = "float"
   }
-  case class Unit() extends Type {
+  case class Unit() extends Primitive {
     def prettyPrint: String = "()"
   }
-  case class Bool() extends Type {
+  case class Bool() extends Primitive {
     def prettyPrint: String = "bool"
   }
   case class Function(input: Type, output: Type) extends Type {

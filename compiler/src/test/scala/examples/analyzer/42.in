@@ -1,0 +1,8 @@
+type 'a list = Head | Node of 'a * 'a list;;
+let a = Node(1, Head);;
+
+(*====================
+type list : list (Head | Node of 'a * 'a list)
+val a : Node of int * Head of ()
+- :Node of int * Head of ()
+====================*)

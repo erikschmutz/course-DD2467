@@ -1,0 +1,1 @@
+AnalyzerResult(Unit(),Enviroment(List(TypeEntry(Identifier(tree),Constraints(tree,List(Constraint(Leaf,None,List('a)),Constraint(Node,Some(Tuple(List(Unknown('a),CustomType(tree,List('a)),CustomType(tree,List('a))),List())),List('a))),List('a))))))

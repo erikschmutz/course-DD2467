@@ -1,0 +1,1 @@
+AnalyzerResult(Unit(),Enviroment(List(TypeEntry(Identifier(tuple),Tuple(List(Unknown('a),Unknown('a)),List())))))

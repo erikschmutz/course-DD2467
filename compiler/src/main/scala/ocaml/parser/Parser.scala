@@ -2,16 +2,23 @@
 
 Program             ::= (Expression | Definition) Divider | (Expression | Definition)*
 
-Definition          ::= TypeDef | BindingAssignments | BindingRecAssignments | Assignment
+Terminals           ::= Terminal*
+
+Terminal            ::= accept(String, PartialFunction[Tokens.TokenKind, Trees.Tokens.Token]) 
+
+Types               ::= TypeDef
 
 TypeOptions         ::= (OpenParantheses rep1sep(TypeOption, Comma) CloseParantheses) | repNM(0, 100, TypeOption)
+
 TypeOption          ::= TypeParam
 
 TypeInformation     ::= ConstrDeclarations | TypeRepresation | TypeEquation
 
 ConstrDeclarations  ::= rep1sep(ConstrDeclaration, Line)
+
+ConstrDeclarationOf::= ConstIdentifier Of TypeExpression
+
 ConstrDeclaration   ::= ConstrDeclarationOf | ConstIdentifier
-ConstrDeclarationOf ::= ConstIdentifier Of TypeExpression
 
 TypeEquation        ::= TypeExpression
 
@@ -19,36 +26,61 @@ TypeRepresation     ::= OpenCurly rep1sep(FieldDecration, Semicolon) CloseCurly
 
 TypePrimitive       ::= Identifier
 
-TypeDecl            ::= TypePrimitive | OpenParantheses TypeFunction CloseParantheses | OpenParantheses TypeTuple CloseParantheses
+TypeUsage           ::= TypeOptions Identifier
+
+TypeDecl            ::= TypePrimitive | TypeUsage | TypeOption | (OpenParantheses TypeFunction CloseParantheses) | (OpenParantheses TypeTuple CloseParantheses)
+
 TypeFunction        ::= TypeDecl LeftArrow TypeExpression
+
 TypeTuple           ::= TypeDecl Multiply rep1sep(TypeDecl, Multiply)
 
-TypeExpression      ::= TypeFunction | TypeTuple | TypePrimitive
+TypeExpression      ::= TypeTuple | TypeFunction | TypePrimitive | TypeUsage | TypeOption
 
 FieldDecration      ::= Identifier Colon TypeExpression
 
-TypedIdentifier     ::= Identifier Colon Identifier
+Record              ::= OpenCurly rep1sep(Field, Semicolon) CloseCurly
 
-OperatorExpr        ::= Term rep(AddExpr | MinusExpr | FloatAddExpr)
+TypedIdentifier     ::= (Identifier Colon Identifier)
+
+OperatorExpr        ::= Term rep(AddExpr | MinusExpr | FloatAddExpr | DoubleAddExpression | DoubleMinusExpression)
+
 AddExpr             ::= Plus Term
+
 FloatAddExpr        ::= FloatPlus Term
+
+DoubleAddExpression ::= DoublePlus Term
+
+DoubleMinusExpression ::= DoubleMinus Term
+
+DoubleMultiExpression ::= DoubleMultiply Term
+
+DoubleDivideExpression ::= DoubleDivide Term
+
 MinusExpr           ::= Minus Term
 
-Term                ::= Factor rep(MultiplyExpr | DivideExpr)
+Term                ::= Factor rep(MultiplyExpr | DivideExpr | DoubleMultiExpression | DoubleDivideExpression)
+
 MultiplyExpr        ::= Multiply Factor
+
 DivideExpr          ::= Divide Factor
 
 Factor              ::= ParenthesisedSubstitution | Substitutions | Primitive | (OpenParantheses OperatorExpr CloseParantheses)
 
 Identifier          ::= TypedIdentifier | Identifier
 
-Substitution        ::= Expression | Identifier
+Primitive           ::= IntLit | False | True | FloatLit | DoubleLit | Unit | StringLit | Identifier | CharLit
+
+Assignment          ::= Let Identifier Equal Expression
+
+Substitution        ::= (Expression | Identifier)
 
 Substitutions       ::= Identifier rep1(Substitution)
 
 ParenthesisedSubstitution ::= Identifier OpenParantheses rep1(Substitution) CloseParantheses
 
-BindingAssignment   ::= Let Identifier Equal Expression
+BindingAssignment   ::= Identifier
+
+FunctionExpression  ::= Function (Identifier | Unit) LeftArrow Expression
 
 BindingAssignments  ::= Let Identifier repNM(1, Integer.MAX_VALUE, BindingAssignment) Equal Expression
 
@@ -60,19 +92,25 @@ IfExpr              ::= If Expression Then Expression Else Expression
 
 FormulaExpr         ::= SimpleExpression (GreaterThan | LessThan) SimpleExpression
 
-SimpleExpression    ::= OperatorExpr | ParentensisExpression | Primitive | Identifier
+EmptyTypeConstructor ::= ConstIdentifier
+
+TypeConstructor     ::= (ConstIdentifier OpenParantheses Expression CloseParantheses) | EmptyTypeConstructor
+
+Tuple               ::= SimpleExpression Comma rep1sep(SimpleExpression, Comma)
+
+ArrayList           ::= ArrayOpen ArrayClose | (ArrayOpen rep1sep(Expression, Comma) ArrayClose)
+
+SimpleExpression    ::= OperatorExpr | ParentensisExpression | Primitive | Identifier | TypeConstructor
 
 ParentensisExpression ::= OpenParantheses Expression CloseParantheses
 
-Expression          ::= ParenthesisedSubstitution | Substitutions | IfExpr | FormulaExpr | LetBindingExpr | FunctionExpression | SimpleExpression
+Expression          ::= Record | ArrayList | Tuple | TypeConstructor | ParenthesisedSubstitution | Substitutions | IfExpr | FormulaExpr | LetBindingExpr | FunctionExpression | SimpleExpression
 
-FunctionExpression  ::= Function (Identifier | Unit) LeftArrow Expression
+Definition          ::= Types | BindingAssignments | BindingRecAssignments | Assignment
 
-Primitive           ::= IntLit | False | True | FloatLit | Unit | StringLit | Identifier | CharLit
-
-Assignment          ::= Let Identifier Equal Expression
 
  */
+
 import scala.util.parsing.combinator.{RegexParsers, Parsers}
 import ocaml.tokens._
 import ocaml.trees._
@@ -346,6 +384,7 @@ object Parser extends Parsers {
     def TypeOption = Terminals.TypeParam ^^ { case id =>
       Trees.TypeOption(id.value)
     }
+
     def TypeInformation = ConstrDeclarations | TypeRepresation | TypeEquation;
 
     def ConstrDeclarations = rep1sep(ConstrDeclaration, Terminals.Line) ^^ { case constraints =>
@@ -374,8 +413,12 @@ object Parser extends Parsers {
       Trees.TypePrimitive(identifier.value)
     }
 
+    def TypeUsage = TypeOptions ~ Terminals.Identifier ^^ {
+      case opt ~ identifier => Trees.TypeUsage(identifier.value, opt)
+    }
+
     def TypeDecl: Parser[Trees.TypeExp] =
-      TypePrimitive | Terminals.OpenParantheses ~> TypeFunction <~ Terminals.CloseParantheses | Terminals.OpenParantheses ~> TypeTuple <~ Terminals.CloseParantheses;
+        TypePrimitive | TypeUsage |TypeOption | Terminals.OpenParantheses ~> TypeFunction <~ Terminals.CloseParantheses | Terminals.OpenParantheses ~> TypeTuple <~ Terminals.CloseParantheses;
 
     def TypeFunction = TypeDecl ~ Terminals.LeftArrow ~ TypeExpression ^^ { case in ~ _ ~ out =>
       Trees.TypeFunction(in, out)
@@ -386,7 +429,7 @@ object Parser extends Parsers {
         Trees.TypeTuple(List(expr) ++ list)
       }
 
-    def TypeExpression: Parser[Trees.TypeExp] = TypeFunction | TypeTuple | TypePrimitive;
+    def TypeExpression: Parser[Trees.TypeExp] =  TypeTuple | TypeFunction | TypePrimitive | TypeUsage | TypeOption;
 
     def FieldDecration = Terminals.Identifier ~ Terminals.Colon ~ TypeExpression ^^ { case identifier ~ _ ~ _type =>
       Trees.TypeFieldDeclaration(identifier.value, _type)
@@ -552,23 +595,27 @@ object Parser extends Parsers {
       case left ~ operator ~ right => Trees.OperatorExpr(left, right, operator)
     }
 
+  def EmptyTypeConstructor = Terminals.ConstIdentifier ^^ {
+        case identifier => Trees.Constructor(identifier.value, Trees.Tokens.Unit())
+  }
+
   def TypeConstructor: Parser[Trees.Constructor] =
-    Terminals.ConstIdentifier ~ Terminals.OpenParantheses ~ Expression ~ Terminals.CloseParantheses ^^ {
-      case identifier ~ _ ~ values ~ _ => Trees.Constructor(identifier.value, values)
-    }
+    (Terminals.ConstIdentifier ~  Expression ^^ {
+      case identifier ~ values  => Trees.Constructor(identifier.value, values)
+    }) | EmptyTypeConstructor
 
   def Tuple: Parser[Trees.Tuple] =
-    SimpleExpression ~ Terminals.Comma ~ rep1sep(SimpleExpression, Terminals.Comma) ^^ { case expr ~ _ ~ exprs =>
+    Terminals.OpenParantheses ~> SimpleExpression ~ Terminals.Comma ~ rep1sep(SimpleExpression, Terminals.Comma) <~ Terminals.CloseParantheses ^^ { case expr ~ _ ~ exprs =>
       Trees.Tuple(List(expr) ::: exprs)
     }
 
   def ArrayList: Parser[Trees.ArrayList] =
-    Terminals.ArrayOpen ~ rep1sep(SimpleExpression, Terminals.Comma) ~ Terminals.ArrayClose ^^ { case _ ~ exprs ~ _ =>
+    Terminals.ArrayOpen ~ rep1sep(Expression, Terminals.Semicolon) ~ Terminals.ArrayClose ^^ { case _ ~ exprs ~ _ =>
       Trees.ArrayList(exprs)
     }
 
   def SimpleExpression: Parser[Trees.Expr] =
-    OperatorExpr | ParentensisExpression | Primitive | Identifier
+    OperatorExpr | ParentensisExpression | Primitive | Identifier | TypeConstructor
 
   def ParentensisExpression: Parser[Trees.Expr] = Terminals.OpenParantheses ~> Expression <~ Terminals.CloseParantheses
   def Expression: Parser[Trees.Expr] =

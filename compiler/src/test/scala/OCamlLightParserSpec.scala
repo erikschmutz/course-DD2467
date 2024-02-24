@@ -115,7 +115,7 @@ class OCamlLightParserSpec extends AnyFlatSpec with Matchers {
 
         outputStr shouldEqual (outFile)
 
-        println(output)
+
 
         // if we succeed we write out the pretty file
         val pretty = getAnalyzerPretty(inFile)

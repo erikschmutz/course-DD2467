@@ -1,0 +1,8 @@
+type 'a tree = Leaf | Node of 'a * 'a tree * 'a tree;;
+let t = Node(1, Node(1, Leaf, Leaf), Leaf);;
+
+(*====================
+type tree : tree (Leaf | Node of 'a * 'a tree * 'a tree)
+val t : Node of int * Node of int * Leaf of () * Leaf of () * Leaf of ()
+- :Node of int * Node of int * Leaf of () * Leaf of () * Leaf of ()
+====================*)

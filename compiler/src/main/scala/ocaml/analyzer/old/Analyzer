@@ -84,10 +84,7 @@ object Analyzer {
   def evaluate(tree: Trees.Tuple, enviroment: Enviroment): T = {
     val _type = Types.Tuple(
       tree.entries.map((entry) => {
-        evaluate(entry, enviroment) match {
-          case Some(value) => value._type
-          case _           => return None
-        }
+        evaluate(entry, enviroment).get._type
       }),
       List()
     );
@@ -168,17 +165,7 @@ object Analyzer {
 
     val res = (a, b) match {
       case (a: Types.Primitive, b: Types.Unknown) => {
-        enviroment.findType(b.id) match {
-          case None => return Some(AnalyzerResult(a, enviroment.withType(b.id, a)))
-          case Some(value) if value._type.isInstanceOf[Types.Unknown] =>
-            return Some(AnalyzerResult(a, enviroment.withType(b.id, a)))
-          case Some(value) if value._type == a =>
-            return Some(AnalyzerResult(a, enviroment.withType(b.id, a)))
-          case Some(value) => {
-            println("Found type: " + value + "expected " + a)
-            None
-          }
-        }
+        return Some(AnalyzerResult(a, enviroment.withType(b.id, a)))
       }
 
       case (a: Types.Tuple, b: Types.Tuple) => {
@@ -187,12 +174,12 @@ object Analyzer {
         var values: List[Types.Type] = List();
 
         for ((a, b) <- zipped) {
+
           val res = checkType(a, b, env);
           if (res == None) return None;
           env = res.get.enviroment;
           values = values ++ List(res.get._type)
         }
-
         Some(
           AnalyzerResult(
             Types.Tuple(values, List()),
@@ -208,7 +195,7 @@ object Analyzer {
               AnalyzerResult(
                 Types.Constraint(
                   b.name,
-                  Some(value._type),
+                  b.of,
                   b.generics.map((g) => {
                     value.enviroment.types().find(v => v.identifier == g) match {
                       case Some(v) => v._type.toString()
@@ -238,13 +225,9 @@ object Analyzer {
         }
       }
 
-      case (a: Types.Constraint, b: Types.Type) => {
-        checkType(a.of.getOrElse(Types.Unit()), b, enviroment)
-      }
-
       case _ => {
-        println("Unable to find for a " + a)
-        println("Unable to find for b " + b)
+        println("Unable to find for " + a)
+        println("Unable to find for " + b)
         None
       }
     }
@@ -260,10 +243,9 @@ object Analyzer {
     val t = enviroment.findType(tree.identifier)
     evaluate(tree.values, enviroment) match {
       case Some(res) => {
-        checkType(res._type, t.get._type, enviroment) match {
-          case None        => None
-          case Some(value) => Some(AnalyzerResult(value._type, enviroment))
-        }
+        val i = checkType(res._type, t.get._type, enviroment)
+
+        return Some(AnalyzerResult(i.get._type, enviroment))
         // findType(tree, enviroment) match {
         //   case Some(TypeEntry(_, _type: Types.Type)) => {
         //      val t = evaluate(tree.values, enviroment)
